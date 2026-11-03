@@ -16,22 +16,104 @@ const BRAND = {
 
 const WP = 'https://blue-network.sa/wp-content/uploads/';
 
+/* الأعمال: من بروفايل 2026 وحساب Vimeo. الغلاف في assets/work/<slug>.webp */
 const PROJECTS = [
- {slug:'asrarco',   ar:'إعلان أسراركو', en:'Asrarco Commercial', k:'ads',   car:'إعلانات', cen:'Commercial',  y:'2025', img:WP+'2025/05/Asrarco_Home.jpg'},
- {slug:'medical',   ar:'دراما طبية',    en:'Medical Drama',      k:'drama', car:'دراما',   cen:'Drama',       y:'2025', img:WP+'2025/05/Medical_Drama.jpg'},
- {slug:'trump',     ar:'عقل ترامب',     en:"Trump's Brain",      k:'gfx',   car:'جرافيك',  cen:'Graphics',    y:'2025', img:WP+'2025/04/Trump-copy-1024x782.jpg'},
- {slug:'shokran',   ar:'فيلم شكراً',    en:'Shokran — Short Film',k:'drama',car:'فيلم قصير',cen:'Short Film', y:'2022', img:WP+'2022/09/SHOKRAN_MOVIE-1024x683.png'},
- {slug:'education', ar:'حق التعليم',    en:'Right of Education', k:'ads',   car:'إعلانات', cen:'Commercial',  y:'2022', img:WP+'2022/09/ID_PROMO-1-1024x683.png'},
- {slug:'mesh',      ar:'مش بالشكل',     en:'Mesh Bel Shakl',     k:'clip',  car:'كليب',    cen:'Music Clip',  y:'2022', img:WP+'2022/09/MESH_BLSHAKL-1-1024x683.png'},
- {slug:'se7a',      ar:'صحة بلس',       en:'Se7a Plus',          k:'prog',  car:'برامج',   cen:'Programs',    y:'2022', img:WP+'2022/09/04_Se7a_PLUS-1-1024x683.png'},
- {slug:'far7a',     ar:'قصة فرحة',      en:'Far7a Story',        k:'gfx',   car:'جرافيك',  cen:'Graphics',    y:'2022', img:WP+'2022/10/SHOWREEL-COVER-1024x683.png'}
+ {slug:'muhaidib', vid:'1239458890', k:'ads', y:2026, d:41, r:'3840/2160',
+  ar:'حملة المهيدب لطب الأسنان', en:'Al Muhaidib Dental Campaign', cl_ar:'مجموعة المهيدب', cl_en:'Al Muhaidib Group',
+  sar:'حملة ترويجية لمستشفى المهيدب لطب الأسنان تسلّط الضوء على مشكلات الأسنان الشائعة وأهمية العلاج المبكر وتقويم الأسنان.',
+  sen:'A promotional campaign for Al Muhaidib Dental Hospital highlighting common dental problems and the importance of early treatment and orthodontic care.'},
+ {slug:'thaqafiya-eid', vid:'1239459147', k:'prog', y:2026, d:89, r:'3840/2160',
+  ar:'برنامج «عِد» — قناة الثقافية', en:'‘Id’ — Al Thaqafiya Channel', cl_ar:'قناة الثقافية', cl_en:'Al Thaqafiya Channel',
+  sar:'برنامج تلفزيوني لقناة الثقافية يستكشف المساجلات الشعرية التاريخية بين شاعرين، ويتتبّع حياتهما ومسيرتهما الإبداعية وتطوّر الخصومة الأدبية بينهما.',
+  sen:'A TV programme for Al Thaqafiya Channel exploring historic poetic rivalries between two poets, tracing their lives, creative journeys and the evolution of their literary conflict.'},
+ {slug:'wasad', vid:'1239461716', k:'corp', y:2026, d:236, r:'1920/1080',
+  ar:'وثائقي وسد الصناعية', en:'Wasad Industrial Documentary', cl_ar:'وسد الصناعية', cl_en:'Wasad Industrial',
+  sar:'فيلم ترويجي لشركة وسد الصناعية يستعرض مشاريعها الكبرى في أنحاء المملكة، وقدراتها وخبرتها وأثرها الصناعي.',
+  sen:'A promotional film for Wasad Industrial Company showcasing its large-scale projects across Saudi Arabia and its capabilities, expertise and industrial impact.'},
+ {slug:'manarat', vid:'1239461032', k:'corp', y:2026, d:162, r:'3840/2160',
+  ar:'مدارس منارات القصيم', en:'Al Manarat Schools, Al Qassim', cl_ar:'مدارس منارات القصيم', cl_en:'Al Manarat Schools',
+  sar:'فيلم مؤسسي لمدارس منارات القصيم يبرز مسيرة المدرسة وبيئتها التعليمية وقيمها، بسرد بصري حديث.',
+  sen:'A corporate film for Al Manarat Schools in Al Qassim, highlighting the school\'s journey, learning environment and core values through modern visual storytelling.'},
+ {slug:'asrarco', vid:'1060999186', k:'ads', y:2025, d:56, r:'1920/1080',
+  ar:'أسراركو — الجمعة البيضاء', en:'Asrarco — White Friday', cl_ar:'أسراركو', cl_en:'Asrarco',
+  sar:'إعلان عروض الجمعة البيضاء من أسراركو على منتجات التجميل والعناية بالبشرة.',
+  sen:'Asrarco\'s best-ever White Friday deals on top-tier beauty and skincare products.'},
+ {slug:'medical-drama', vid:'1098163515', k:'drama', y:2025, d:73, r:'1920/1080',
+  ar:'إشاعات طبية — اسكتش درامي', en:'Medical Rumor — Drama Sketch', cl_ar:'', cl_en:'',
+  sar:'اسكتش درامي يتناول خرافات طبية شائعة عن إنقاص الوزن، صُنع مدخلاً لحلقات برنامج الإشاعات الطبية.',
+  sen:'A dramatic sketch addressing common medical myths about weight loss, made as the opening of the health-myths programme.'},
+ {slug:'alghad-college', vid:'1239459824', k:'corp', y:2026, d:166, r:'3840/2160',
+  ar:'كلية الغد — الرياض', en:'Alghad College, Riyadh', cl_ar:'كلية الغد', cl_en:'Alghad College',
+  sar:'فيلم مؤسسي لكلية الغد في الرياض يعرض مسيرتها الأكاديمية وبيئتها التعليمية المتقدمة ودورها في تنمية الكفاءات الوطنية.',
+  sen:'A corporate film for Alghad College in Riyadh, showcasing its academic journey, advanced learning environment and contribution to developing national talent.'},
+ {slug:'hemmtk', vid:'1239462385', k:'corp', y:2026, d:68, r:'1920/1080',
+  ar:'همتك — مؤتمر سوق العمل الدولي', en:'Hemmtk — Global Labor Market Conference', cl_ar:'همتك', cl_en:'Hemmtk',
+  sar:'تغطية لتطبيق همتك في قاعة الملك عبدالعزيز للمؤتمرات، توثّق أنشطة جناح التطبيق وحفل تكريمه.',
+  sen:'Event coverage for Hemmtk at King Abdulaziz Conference Hall, documenting the app\'s booth and its recognition ceremony.'},
+ {slug:'maiz', vid:'1239459278', k:'ads', y:2026, d:23, r:'1080/1920',
+  ar:'مطعم مايز — الدرعية', en:'MAIZ Restaurant, Diriyah', cl_ar:'مطعم مايز', cl_en:'MAIZ',
+  sar:'ريلز ترويجية لمطعم مايز في الدرعية تعرض أجواءه الفاخرة وخدمته ومطبخه وطهاته ضمن حملة تسويقية.',
+  sen:'Promotional reels for MAIZ restaurant in Diriyah, showing its ambiance, service, cuisine and chefs as part of a marketing campaign.'},
+ {slug:'tasooma', vid:'1105055134', k:'ads', y:2025, d:58, r:'1080/1920',
+  ar:'تاسومة — عروض الصيف', en:'Tasooma — Summer Offers', cl_ar:'تاسومة', cl_en:'Tasooma',
+  sar:'مجموعة إعلانات لتاسومة تقدّم أحد أقوى عروض الشركة الصيفية.',
+  sen:'A set of ads for Tasooma presenting one of the company\'s strongest summer offers.'},
+ {slug:'sapac', vid:'1239459070', k:'corp', y:2026, d:55, r:'3840/2160',
+  ar:'برنامج المتدربين — سبك', en:'SAPAC Trainee Programme', cl_ar:'سبك', cl_en:'SAPAC',
+  sar:'فيلم عن برنامج المتدربين في شركة سبك.',
+  sen:'A film about the SAPAC trainee programme.'},
+ {slug:'alghad-school', vid:'1239460628', k:'corp', y:2026, d:168, r:'3840/2160',
+  ar:'مدارس الغد — القصيم', en:'Alghad Schools, Al Qassim', cl_ar:'مدارس الغد', cl_en:'Alghad Schools',
+  sar:'فيلم مؤسسي لمدارس الغد في القصيم.',
+  sen:'A corporate film for Alghad Schools in Al Qassim.'},
+ {slug:'wasad-buildex', vid:'1239461386', k:'corp', y:2026, d:69, r:'3840/2160',
+  ar:'وسد في معرض بيلدكس', en:'Wasad at Buildex', cl_ar:'وسد الصناعية', cl_en:'Wasad Industrial',
+  sar:'تغطية جناح شركة وسد في معرض بيلدكس.',
+  sen:'Coverage of Wasad\'s stand at the Buildex exhibition.'},
+ {slug:'zamalek', vid:'1239457850', k:'ads', y:2026, d:60, r:'3840/2160',
+  ar:'أكاديمية الزمالك — الرياض', en:'Zamalek Academy, Riyadh', cl_ar:'أكاديمية الزمالك', cl_en:'Zamalek Academy',
+  sar:'فيلم لفرع أكاديمية الزمالك في الرياض.',
+  sen:'A film for the Zamalek Academy\'s Riyadh branch.'},
+ {slug:'medical-show', vid:'1028011078', k:'prog', y:2024, d:344, r:'1280/720',
+  ar:'إشاعات طبية — البرنامج', en:'Medical Rumor — Social Programme', cl_ar:'', cl_en:'',
+  sar:'حلقة تفنّد خرافات طبية شائعة، وكل حلقة تتناول إشاعة واحدة وتفصل الحقيقة عن المفاهيم الخاطئة.',
+  sen:'An episode debunking common medical myths; each episode takes one rumour and separates the facts from the misconceptions.'},
+ {slug:'child-right', vid:'1028010232', k:'ads', y:2024, d:35, r:'1920/1080',
+  ar:'حق الطفل', en:'Child’s Right', cl_ar:'', cl_en:'',
+  sar:'إعلان يحمل رسالة أن التعليم الجيد حق أساسي لكل طفل، ويؤكد التزام المؤسسة بإتاحته للجميع.',
+  sen:'An ad carrying the message that quality education is a fundamental right for every child, and the foundation\'s commitment to making it accessible to all.'},
+ {slug:'shokran', vid:'753936642', k:'drama', y:2022, d:65, r:'1920/1080',
+  ar:'شكراً — فيلم قصير', en:'Shokran — Short Film', cl_ar:'', cl_en:'',
+  sar:'فيلم درامي قصير عن طفل ممزّق بين الكتابة عن إنجازات وطنه في المدرسة وقسوة واقعه في البيت. تولّينا الفكرة والسيناريو والإنتاج كاملاً.',
+  sen:'A short drama about a young boy torn between writing about his country\'s achievements at school and the harsh realities of his home life. We handled the concept, script and full production.'},
+ {slug:'trump', vid:'1061034231', k:'gfx', y:2025, d:44, r:'1920/1080',
+  ar:'عقل ترامب — وثائقي', en:'Trump’s Brain — Documentary', cl_ar:'', cl_en:'',
+  sar:'فيلم وثائقي يستكشف تفكير دونالد ترامب واستراتيجياته السياسية وشخصيته، وطريقته في اتخاذ القرار والقيادة.',
+  sen:'A documentary exploring Donald Trump\'s thinking, political strategies and personality, and how he makes decisions and leads.'},
+ {slug:'se7a', vid:'752294977', k:'prog', y:2022, d:33, r:'1920/1080',
+  ar:'صحة بلس', en:'Se7a Plus', cl_ar:'', cl_en:'',
+  sar:'',
+  sen:''},
+ {slug:'mesh', vid:'752997311', k:'clip', y:2022, d:14, r:'1920/1080',
+  ar:'مش بالشكل', en:'Mesh Bel Shakl', cl_ar:'', cl_en:'',
+  sar:'',
+  sen:''},
+ {slug:'far7a', vid:'753918482', k:'gfx', y:2022, d:53, r:'1920/1080',
+  ar:'قصة فرحة', en:'Far7a Story', cl_ar:'', cl_en:'',
+  sar:'',
+  sen:''}
 ];
 
 const CATS = [
  {k:'all', ar:'الكل', en:'All'}, {k:'ads', ar:'إعلانات', en:'Commercials'},
  {k:'drama', ar:'دراما', en:'Drama'}, {k:'gfx', ar:'جرافيك', en:'Graphics'},
+ {k:'corp', ar:'أفلام مؤسسية', en:'Corporate'},
  {k:'clip', ar:'كليبات', en:'Clips'}, {k:'prog', ar:'برامج', en:'Programs'}
 ];
+PROJECTS.forEach(p=>{
+  const c=CATS.find(c=>c.k===p.k); p.car=c.ar; p.cen=c.en;
+  p.img=`assets/work/${p.slug}.webp`;
+});
 
 /* الخدمات موزّعة على مراحل الإنتاج — بدون ترقيم */
 const PHASES = [
@@ -110,7 +192,19 @@ const FIELDS_EN = ['Production','Short Films','Graphics','Commercials','Drama',
 /* نمط غير منتظم حتى لا تلاحظ العين تكراراً */
 const OPACITY  = [1,.5,.75,1,.5,1,.75,.5,1,.75];
 
-const CLIENTS = ['ASRARCO','TASOOMA','SE7A PLUS','THAAD','HIKAYAT','FAR7A','NOR EL DONYA','MBC'];
+/* شعارات العملاء من بروفايل 2026 — نسخ بيضاء شفافة في assets/clients */
+const CLIENTS = [
+ {f:'moc',ar:'وزارة الثقافة',en:'Ministry of Culture'},{f:'thaqafiya',ar:'قناة الثقافية',en:'Al Thaqafiya'},
+ {f:'wasad',ar:'وسد',en:'Wasad'},{f:'almuhaidib',ar:'مجموعة المهيدب',en:'Al Muhaidib Group'},
+ {f:'alghad',ar:'كلية الغد',en:'Alghad College'},{f:'hemmtk',ar:'همتك',en:'Hemmtk'},
+ {f:'sapac',ar:'سبك',en:'SAPAC'},{f:'tasooma',ar:'تاسومة',en:'Tasooma'},
+ {f:'maiz',ar:'مايز',en:'MAIZ'},{f:'alkhozama',ar:'الخزامى للاستثمار',en:'Al Khozama Investment'},
+ {f:'holiday-inn',ar:'هوليداي إن',en:'Holiday Inn'},{f:'arabian-oud',ar:'العربية للعود',en:'Arabian Oud'},
+ {f:'makhazen-alenayah',ar:'مخازن العناية',en:'Makhazen Alenayah'},{f:'maknoon-alsharq',ar:'مكنون الشرق',en:'Maknoon Alsharq'},
+ {f:'alwaqea',ar:'الواقع',en:'Alwaqea'},{f:'index',ar:'إندكس',en:'INDEX'},
+ {f:'almaha',ar:'المها للإنتاج',en:'Al Maha Production'},{f:'dar-sas',ar:'دار ساس الأمنية',en:'Dar SAS Security'}
+];
+const logoImg = c => `<img src="assets/clients/${c.f}.webp" alt="${c.en}" loading="lazy" decoding="async">`;
 
 /* ─────────── الترويسة ─────────── */
 const NAV = [
@@ -254,9 +348,9 @@ function buildCTA(){
 
 /* ── شريط شعارات العملاء ── */
 function buildLogos(){
-  const row = CLIENTS.map(c=>`<span class="lg">${c}</span>`).join('');
+  const row = CLIENTS.map(c=>`<span class="lg">${logoImg(c)}</span>`).join('');
   return `<section class="clients"><div class="cl-track">
-    <div class="cl-grp">${row}</div><div class="cl-grp">${row}</div></div></section>`;
+    <div class="cl-grp">${row}</div><div class="cl-grp" aria-hidden="true">${row}</div></div></section>`;
 }
 
 function buildMockbar(){
@@ -274,8 +368,8 @@ function buildMockbar(){
 }
 
 function tile(p, size){
-  return `<a href="project.html" class="tile ${size}" data-k="${p.k}">
-    <img src="${p.img}" alt="" loading="lazy">
+  return `<a href="project.html?w=${p.slug}" class="tile ${size}" data-k="${p.k}">
+    <img src="${p.img}" alt="" loading="lazy" decoding="async">
     <span class="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>
     <span class="ov"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
     <span class="t" data-ar="${p.ar}" data-en="${p.en}">${p.ar}</span></span></a>`;

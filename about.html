@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     `<div class="member"><img src="${m.img}" alt="" loading="lazy">
       <span class="nm"><b>—</b><span data-ar="${m.ar}" data-en="${m.en}">${m.ar}</span></span></div>`).join('');
 
-  document.getElementById('logos').innerHTML = CLIENTS.map(c=>`<div>${c}</div>`).join('');
+  document.getElementById('logos').innerHTML = CLIENTS.map(c=>`<div>${logoImg(c)}</div>`).join('');
 });
 </script>
 </body>
