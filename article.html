@@ -55,7 +55,7 @@
       <span>·</span><span data-ar="9 دقائق قراءة" data-en="9 min read">9 دقائق قراءة</span>
     </div>
 
-    <div class="cover"><img src="https://blue-network.sa/wp-content/uploads/2025/05/Asrarco_Home.jpg" alt=""></div>
+    <div class="cover"><img src="assets/blog/production-cost.webp" alt=""></div>
 
     <div class="toc">
       <b data-ar="محتويات المقال" data-en="IN THIS ARTICLE">محتويات المقال</b>
@@ -149,17 +149,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   const R=[
    {ar:'كيف تختار شركة إنتاج فيديو لمشروعك؟',en:'How to choose a production company',car:'نصائح الإنتاج',cen:'Tips',
     d:'12 أكتوبر 2026',r:'6',exar:'خمسة معايير عملية قبل التوقيع.',exen:'Five practical criteria before signing.',
-    img:WP+'2022/09/04_Se7a_PLUS-1-1024x683.png'},
+    img:'assets/blog/choose-company.webp'},
    {ar:'متى تختار الموشن جرافيك بدل التصوير؟',en:'Motion graphics or filming?',car:'موشن',cen:'Motion',
     d:'2 سبتمبر 2026',r:'5',exar:'ثلاث حالات يكون فيها الأنيميشن أفضل.',exen:'Three cases where animation wins.',
-    img:WP+'2025/04/Trump-copy-1024x782.jpg'},
+    img:'assets/blog/motion-vs-film.webp'},
    {ar:'ما الذي يجب أن يحتويه موجز المشروع؟',en:'What a creative brief must contain',car:'نصائح الإنتاج',cen:'Tips',
     d:'20 أغسطس 2026',r:'7',exar:'نموذج جاهز يختصر أسابيع من المراجعات.',exen:'A template that saves weeks.',
-    img:WP+'2022/09/ID_PROMO-1-1024x683.png'}
+    img:'assets/blog/creative-brief.webp'}
   ];
   document.getElementById('rel').innerHTML=R.map(p=>
     `<a class="post" href="article.html">
-      <span class="ph"><img src="${p.img}" alt="" loading="lazy"></span>
+      <span class="ph"><img src="${p.img}" alt="" loading="lazy" decoding="async"></span>
       <span class="bd">
         <span class="meta"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
           <span>${p.d}</span><span data-ar="${p.r} دقائق قراءة" data-en="${p.r} min read">${p.r} دقائق قراءة</span></span>

@@ -133,30 +133,30 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
   }
 })();
 document.addEventListener('DOMContentLoaded',()=>{
-  const sizes=['s-lg','s-md','s-wd','s-wd','s-md','s-md'];
-  document.getElementById('mosaic').innerHTML =
-    PROJECTS.slice(0,6).map((p,i)=>tile(p,sizes[i])).join('');
+  const mos=document.getElementById('mosaic');
+  mos.innerHTML = PROJECTS.slice(0,7).map(p=>tile(p)).join('');
+  layMosaic(mos);
 
   const POSTS=[
     {ar:'كيف تختار شركة إنتاج فيديو لمشروعك؟',en:'How to choose a video production company',
      car:'نصائح الإنتاج',cen:'Production Tips',d:'12 أكتوبر 2026',r:'6',
      exar:'خمسة معايير عملية تساعدك على تقييم أي شركة إنتاج قبل التوقيع، من الشوريل إلى طريقة إدارة الميزانية.',
      exen:'Five practical criteria to evaluate any production house before signing.',
-     img:WP+'2022/09/04_Se7a_PLUS-1-1024x683.png'},
+     img:'assets/blog/choose-company.webp'},
     {ar:'لماذا يتفوّق الفيديو على الصورة في حملات السوشيال؟',en:'Why video outperforms stills on social',
      car:'التسويق بالفيديو',cen:'Video Marketing',d:'28 سبتمبر 2026',r:'4',
      exar:'أرقام من حملات نفّذناها في السوق السعودي توضّح الفرق في التفاعل ومعدّل التحويل.',
      exen:'Numbers from campaigns we ran in the Saudi market showing the engagement gap.',
-     img:WP+'2022/09/MESH_BLSHAKL-1-1024x683.png'},
+     img:'assets/blog/video-social.webp'},
     {ar:'كواليس تصوير «دراما طبية»',en:'Behind the scenes of Medical Drama',
      car:'من الكواليس',cen:'Behind the Scenes',d:'15 سبتمبر 2026',r:'8',
      exar:'كيف صوّرنا مستشفى كاملاً في ثلاثة أيام، والدروس التي خرجنا بها في إدارة المواقع.',
      exen:'How we shot a full hospital in three days, and what we learned about location management.',
-     img:WP+'2025/05/Medical_Drama.jpg'}
+     img:'assets/work/medical-drama.webp'}
   ];
   document.getElementById('posts').innerHTML = POSTS.map(p=>
     `<a class="post" href="article.html">
-      <span class="ph"><img src="${p.img}" alt="" loading="lazy"></span>
+      <span class="ph"><img src="${p.img}" alt="" loading="lazy" decoding="async"></span>
       <span class="bd">
         <span class="meta"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
           <span>${p.d}</span><span data-ar="${p.r} دقائق قراءة" data-en="${p.r} min read">${p.r} دقائق قراءة</span></span>

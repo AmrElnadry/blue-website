@@ -163,6 +163,85 @@ const PHASES = [
 /* قائمة مسطّحة تُستخدم في الصفحة الرئيسية */
 const SERVICES = PHASES.flatMap(p=>p.items);
 
+/* تفاصيل صفحة كل خدمة (service.html?s=slug): مقدّمة، ما يشمله العمل، وأعمال ذات صلة.
+   الوصف نطاق عمل فقط — لا أسعار ولا مُدد ولا أرقام بدون تأكيد */
+const SVC_DETAIL = {
+ ideas:{w:['child-right','asrarco','muhaidib'],
+  lar:'قبل أي تصوير نحتاج فكرة واضحة. نجلس معك لنفهم الهدف والجمهور والرسالة، ثم نقترح أفكاراً إبداعية تخدم ذلك، ونخرج بموجز مكتوب تعتمده قبل أن نبدأ.',
+  len:'Before any shoot comes a clear idea. We sit with you to understand the goal, audience and message, propose creative directions that serve them, and end with a written brief you approve before we start.',
+  inc:[['جلسة اكتشاف لفهم الهدف والجمهور','A discovery session on goal and audience'],
+       ['أكثر من اتجاه إبداعي للمقارنة','Several creative directions to compare'],
+       ['مراجع بصرية ولوحات مزاج','Visual references and mood boards'],
+       ['موجز إبداعي مكتوب ومعتمد منك','A written creative brief you sign off'],
+       ['رسالة رئيسية مختصرة لكل جمهور','A short key message for each audience']]},
+ script:{w:['medical-drama','shokran','medical-show'],
+  lar:'نكتب قصصاً بلغة الجمهور السعودي، سواء كان فيلماً قصيراً أو إعلاناً أو حلقة برنامج، ونرفقها بلوح تصوير يوضّح كل لقطة قبل أن نصل إلى موقع التصوير.',
+  len:'We write stories in the language of the Saudi audience — short film, commercial or programme episode — with a storyboard that shows every shot before we reach the set.',
+  inc:[['سيناريو كامل بالحوار والوصف','A full script with dialogue and action'],
+       ['لوح تصوير يوضّح كل لقطة','A storyboard for every shot'],
+       ['نص التعليق الصوتي عند الحاجة','Voiceover copy when needed'],
+       ['نسخ مختصرة للمنصات المختلفة','Cut-down versions for each platform'],
+       ['جولات مراجعة قبل الاعتماد النهائي','Review rounds before final approval']]},
+ campaigns:{w:['tasooma','maiz','muhaidib'],
+  lar:'نحوّل الهدف التسويقي إلى حملة مرحلية: ماذا ننتج، ولأي منصة، ومتى ينشر، وكيف نقيس النتيجة. وتتوزّع الميزانية على القنوات حسب ما يخدم الهدف.',
+  len:'We turn a marketing goal into a staged campaign: what to make, for which platform, when it goes out and how we measure it, with the budget split across channels to serve the goal.',
+  inc:[['استراتيجية الحملة ومراحلها','Campaign strategy and stages'],
+       ['أهداف قابلة للقياس لكل مرحلة','Measurable goals for each stage'],
+       ['خطة محتوى لكل منصة','A content plan for each platform'],
+       ['توزيع الميزانية على القنوات','Budget split across channels'],
+       ['جدول نشر وإنتاج متكامل','A combined production and publishing schedule']]},
+ film:{w:['shokran','wasad','trump'],
+  lar:'ننتج الأفلام القصيرة والوثائقية والدراما والأفلام المؤسسية بفريق وتجهيزات كاملة، من أول يوم تصوير حتى النسخة النهائية، في الاستوديو أو في المواقع الخارجية.',
+  len:'We produce short films, documentaries, drama and corporate films with a full crew and kit, from the first shoot day to the final cut, in studio or on location.',
+  inc:[['إدارة الإنتاج والمواقع والتصاريح','Production, location and permit management'],
+       ['اختيار الممثلين والمواهب','Casting and talent'],
+       ['فريق تصوير وإضاءة وصوت كامل','A full camera, lighting and sound crew'],
+       ['إخراج وإدارة يوم التصوير','Direction and on-set management'],
+       ['مونتاج وتلوين وصوت حتى النسخة النهائية','Edit, grade and sound through to final']]},
+ commercials:{w:['muhaidib','zamalek','asrarco'],
+  lar:'إعلانات تلفزيونية ورقمية تبدأ من فكرة تبيع، لا من مشاهد جميلة فقط. نكتب ونصوّر ونسلّم بكل المقاسات التي تحتاجها كل منصة.',
+  len:'TV and digital commercials that start from an idea that sells, not just pretty shots. We write, shoot and deliver in every size each platform needs.',
+  inc:[['فكرة وسيناريو مبنيان على هدف الحملة','Idea and script built on the campaign goal'],
+       ['تصوير بالممثلين أو المنتج','Shooting with talent or product'],
+       ['نسخ 16:9 و1:1 و9:16 للمنصات','16:9, 1:1 and 9:16 versions'],
+       ['نسخ قصيرة للإعلانات الممولة','Short cut-downs for paid ads'],
+       ['تعليق صوتي وموسيقى ومؤثرات','Voiceover, music and sound design']]},
+ photo:{w:['maiz','hemmtk','wasad-buildex'],
+  lar:'تصوير فوتوغرافي للمنتجات والفعاليات ومقرات الشركات، بإضاءة وتجهيزات احترافية، ويمكن تنفيذه في يوم التصوير نفسه مع الفيديو.',
+  len:'Product, event and corporate photography with professional lighting and kit — and it can run on the same day as your video shoot.',
+  inc:[['تصوير المنتجات في الاستوديو','Studio product photography'],
+       ['تغطية الفعاليات والمؤتمرات والمعارض','Events, conferences and exhibitions'],
+       ['تصوير المقرات وفرق العمل','Offices, facilities and teams'],
+       ['معالجة وتلوين الصور','Retouching and colour'],
+       ['تسليم بمقاسات الطباعة والمنصات','Delivery sized for print and social']]},
+ motion:{w:['trump','far7a','thaqafiya-eid'],
+  lar:'نصمّم ونحرّك فيديوهات تشرح فكرتك بوضوح: إنفوجرافيك متحرك، وأنيميشن ثنائي وثلاثي الأبعاد، ومؤثرات CGI، ومقدّمات وشارات للبرامج.',
+  len:'We design and animate videos that explain your idea clearly: animated infographics, 2D and 3D animation, CGI, and openers and idents for shows.',
+  inc:[['فيديو تعريفي للشركة أو المنتج','Company or product explainer'],
+       ['إنفوجرافيك متحرك للتقارير والبيانات','Animated infographics for reports and data'],
+       ['أنيميشن ثلاثي الأبعاد ومؤثرات CGI','3D animation and CGI'],
+       ['مقدّمات وشارات للبرامج والقنوات','Openers and idents for shows and channels'],
+       ['تعليق صوتي وموسيقى ومؤثرات','Voiceover, music and sound design']]},
+ editing:{w:['medical-show','thaqafiya-eid','se7a'],
+  lar:'المونتاج هو المكان الذي تتشكّل فيه القصة فعلاً. نركّب المادة، ونصحّح الألوان، ونضيف المؤثرات البصرية، ونصمّم الصوت حتى تخرج النسخة النهائية جاهزة لكل منصة.',
+  len:'The edit is where the story really takes shape. We cut the footage, grade the colour, add visual effects and design the sound until the final version is ready for every platform.',
+  inc:[['مونتاج القصة والإيقاع','Story and pacing edit'],
+       ['تصحيح وتلوين الألوان','Colour correction and grading'],
+       ['مؤثرات بصرية وتنظيف اللقطات','Visual effects and shot clean-up'],
+       ['تصميم الصوت والمكساج','Sound design and mix'],
+       ['ترجمة ونسخ بكل المقاسات','Subtitles and every delivery size']]},
+ identity:{w:['mesh','thaqafiya-eid','far7a'],
+  lar:'نبني هوية بصرية تعكس شخصيتك في كل تفصيل، من الشعار والألوان والخطوط إلى الحركة على الشاشة، ونجمعها في دليل استخدام واضح لفريقك.',
+  len:'We build a visual identity that reflects who you are in every detail — logo, colour and type through to motion on screen — gathered in a clear usage guide for your team.',
+  inc:[['شعار ونظام ألوان وخطوط','Logo, colour and type system'],
+       ['هوية متحركة وشارات للفيديو','Motion identity and video idents'],
+       ['قوالب للسوشيال والعروض','Social and presentation templates'],
+       ['دليل استخدام الهوية','A brand usage guide'],
+       ['ملفات جاهزة للطباعة والشاشة','Files ready for print and screen']]}
+};
+['ideas','script','campaigns','film','commercials','photo','motion','editing','identity']
+  .forEach((k,i)=>Object.assign(SERVICES[i],{slug:k},SVC_DETAIL[k]));
+
 /* مراحل العمل الأربع — الوعد هو الأهم، والمرحلة تسمية له.
    الوعود الأربعة التزامات مؤكَّدة؛ لا تُضَف وعود أو مُدد زمنية بدون تأكيد. */
 const STAGES = [
@@ -193,23 +272,31 @@ const FIELDS_EN = ['Production','Short Films','Graphics','Commercials','Drama',
 const OPACITY  = [1,.5,.75,1,.5,1,.75,.5,1,.75];
 
 /* شعارات العملاء: نسخ بيضاء شفافة في assets/clients.
-   من ليس له ملف شعار (بلا f) يظهر اسمه نصاً إلى أن يتوفّر الشعار */
+   s معامل تكبير بصري: الشعارات العريضة أو الكثيفة تُصغَّر والطويلة أو الخفيفة تُكبَّر
+   حتى تبدو بالوزن نفسه. عميل جديد بلا شعار لا يُضاف إلى أن يتوفّر ملفه */
 const CLIENTS = [
- {f:'moc',ar:'وزارة الثقافة',en:'Ministry of Culture'},{ar:'MBC',en:'MBC'},{f:'thaqafiya',ar:'قناة الثقافية',en:'Al Thaqafiya'},
- {f:'wasad',ar:'وسد',en:'Wasad'},{f:'almuhaidib',ar:'مجموعة المهيدب',en:'Al Muhaidib Group'},
- {f:'alghad',ar:'كلية الغد',en:'Alghad College'},{f:'hemmtk',ar:'همتك',en:'Hemmtk'},
- {f:'sapac',ar:'سبك',en:'SAPAC'},{f:'asrarco',ar:'أسراركو',en:'Asrarco'},{f:'tasooma',ar:'تاسومة',en:'Tasooma'},
- {f:'maiz',ar:'مايز',en:'MAIZ'},{f:'alkhozama',ar:'الخزامى للاستثمار',en:'Al Khozama Investment'},
- {f:'holiday-inn',ar:'هوليداي إن',en:'Holiday Inn'},{f:'arabian-oud',ar:'العربية للعود',en:'Arabian Oud'},
- {f:'makhazen-alenayah',ar:'مخازن العناية',en:'Makhazen Alenayah'},{f:'maknoon-alsharq',ar:'مكنون الشرق',en:'Maknoon Alsharq'},
- {f:'alwaqea',ar:'الواقع',en:'Alwaqea'},{f:'index',ar:'إندكس',en:'INDEX'},
- {f:'almaha',ar:'المها للإنتاج',en:'Al Maha Production'},{f:'dar-sas',ar:'دار ساس الأمنية',en:'Dar SAS Security'},
- {ar:'HIKAYAT',en:'HIKAYAT'},{ar:'SE7A PLUS',en:'SE7A PLUS'},{ar:'THAAD',en:'THAAD'},
- {ar:'FAR7A',en:'FAR7A'},{ar:'NOR EL DONYA',en:'NOR EL DONYA'}
+ {f:'moc',s:0.74,ar:'وزارة الثقافة',en:'Ministry of Culture'},
+ {f:'thaqafiya',s:0.86,ar:'قناة الثقافية',en:'Al Thaqafiya'},
+ {f:'wasad',s:1.0,ar:'وسد',en:'Wasad'},
+ {f:'almuhaidib',s:1.12,ar:'مجموعة المهيدب',en:'Al Muhaidib Group'},
+ {f:'alghad',s:1.14,ar:'كلية الغد',en:'Alghad College'},
+ {f:'hemmtk',s:0.62,ar:'همتك',en:'Hemmtk'},
+ {f:'sapac',s:0.62,ar:'سبك',en:'SAPAC'},
+ {f:'asrarco',s:0.75,ar:'أسراركو',en:'Asrarco'},
+ {f:'tasooma',s:1.12,ar:'تاسومة',en:'Tasooma'},
+ {f:'maiz',s:1.14,ar:'مايز',en:'MAIZ'},
+ {f:'alkhozama',s:0.78,ar:'الخزامى للاستثمار',en:'Al Khozama Investment'},
+ {f:'holiday-inn',s:1.03,ar:'هوليداي إن',en:'Holiday Inn'},
+ {f:'arabian-oud',s:1.03,ar:'العربية للعود',en:'Arabian Oud'},
+ {f:'makhazen-alenayah',s:0.99,ar:'مخازن العناية',en:'Makhazen Alenayah'},
+ {f:'maknoon-alsharq',s:0.95,ar:'مكنون الشرق',en:'Maknoon Alsharq'},
+ {f:'alwaqea',s:0.62,ar:'الواقع',en:'Alwaqea'},
+ {f:'index',s:1.03,ar:'إندكس',en:'INDEX'},
+ {f:'almaha',s:1.12,ar:'المها للإنتاج',en:'Al Maha Production'},
+ {f:'dar-sas',s:1.15,ar:'دار ساس الأمنية',en:'Dar SAS Security'}
 ];
-const logoImg = c => c.f
-  ? `<img src="assets/clients/${c.f}.webp" alt="${c.en}" loading="lazy" decoding="async">`
-  : `<b class="wm">${c.en}</b>`;
+const logoImg = c =>
+  `<img src="assets/clients/${c.f}.webp" alt="${c.en}" style="--s:${c.s}" loading="lazy" decoding="async">`;
 
 /* ─────────── الترويسة ─────────── */
 const NAV = [
@@ -365,20 +452,37 @@ function buildMockbar(){
       <button data-nf="almarai">2</button>
       <button data-nf="tajawal">3</button></span>
     <span class="mb-links"><a href="index.html">الرئيسية</a> · <a href="about.html">من نحن</a> ·
-      <a href="services.html">الخدمات</a> · <a href="service-motion.html">خدمة</a> ·
+      <a href="services.html">الخدمات</a> · <a href="service.html?s=motion">خدمة</a> ·
       <a href="portfolio.html">الأعمال</a> · <a href="project.html">مشروع</a> ·
       <a href="blog.html">المدونة</a> · <a href="article.html">مقال</a> ·
       <a href="contact.html">تواصل</a> · <a href="404.html">404</a></span>
   </div>`;
 }
 
-function tile(p, size){
+function tile(p, size=''){
   return `<a href="project.html?w=${p.slug}" class="tile ${size}" data-k="${p.k}">
     <img src="${p.img}" alt="" loading="lazy" decoding="async">
     <span class="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>
     <span class="ov"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
     <span class="t" data-ar="${p.ar}" data-en="${p.en}">${p.ar}</span></span></a>`;
 }
+
+/* يوزّع أحجام البلاطات الظاهرة بصفوف مجموعها 6 أعمدة دائماً، فلا تبقى فراغات
+   مهما كان العدد أو الفلتر. الصف الأخير الناقص يتمدّد ليملأ العرض */
+const ROWS=[[4,2],[3,3],[2,2,2],[2,4],[3,3],[2,2,2]];
+const SPAN={2:'s-md',3:'s-wd',4:'s-lg',6:'s-fl'};
+function layMosaic(box){
+  if(!box) return;
+  const ts=[...box.querySelectorAll('.tile:not(.hide)')];
+  let i=0,r=0;
+  while(i<ts.length){
+    const left=ts.length-i;
+    let row=ROWS[r++%ROWS.length];
+    if(left<row.length) row=left===1?[6]:[3,3];
+    row.forEach(n=>{ const t=ts[i++]; t.classList.remove('s-md','s-wd','s-lg','s-fl'); t.classList.add(SPAN[n]); });
+  }
+}
+window.layMosaic=layMosaic;
 
 /* ─────────── التشغيل ─────────── */
 document.addEventListener('DOMContentLoaded',()=>{
@@ -458,18 +562,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       box.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
       target.querySelectorAll('.tile').forEach(t=>
         t.classList.toggle('hide', b.dataset.k!=='all' && t.dataset.k!==b.dataset.k));
+      layMosaic(target);
     });
   });
-
-  /* بارالاكس */
-  const mos=document.querySelector('.mosaic');
-  if(mos) addEventListener('scroll',()=>{
-    mos.querySelectorAll('.tile').forEach((t,i)=>{
-      const r=t.getBoundingClientRect();
-      if(r.top<innerHeight&&r.bottom>0) t.style.transform=
-        `translateY(${(((r.top-innerHeight/2)/innerHeight)*(i%2?-9:9)).toFixed(1)}px)`;
-    });
-  },{passive:true});
 
   /* اللغة */
   const apply=ar=>{

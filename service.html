@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خدماتنا — Blue</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Almarai:wght@300;400;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+</head>
+<body data-page="services.html">
+<div id="slot-header"></div>
+
+<section class="phead"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a><span>/</span>
+    <a href="services.html" data-ar="الخدمات" data-en="Services">الخدمات</a><span>/</span>
+    <em style="font-style:normal" id="crumb"></em></div>
+  <h1 class="display h1" id="title"></h1>
+  <p class="lead" id="lead"></p>
+  <div style="margin-top:32px;display:flex;gap:14px;flex-wrap:wrap">
+    <a href="contact.html" class="btn fill" data-ar="ابدأ مشروعك" data-en="Start your project">ابدأ مشروعك</a>
+    <a href="#work" class="btn" data-ar="أعمال ذات صلة" data-en="Related work">أعمال ذات صلة</a>
+  </div>
+</div></section>
+
+<!-- ما يشمله العمل -->
+<section class="sec" style="padding-top:20px"><div class="wrap">
+  <div class="svc-split rev">
+    <div>
+      <h2 class="display h2" data-ar="ما يشمله العمل" data-en="What's included">ما يشمله العمل</h2>
+      <p class="lead" style="margin-top:20px" id="phase"></p>
+    </div>
+    <ul class="checks" id="inc"></ul>
+  </div>
+</div></section>
+
+<!-- مراحل العمل -->
+<section class="sec" style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="rev" style="margin-bottom:clamp(56px,7vw,88px)">
+    <h2 class="display h2" data-ar="كيف نعمل معك" data-en="How we work with you">كيف نعمل معك</h2>
+  </div>
+  <div data-slot="stages"></div>
+</div></section>
+
+<!-- أعمال ذات صلة -->
+<section class="sec" id="work" style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="rev" style="margin-bottom:40px">
+    <h2 class="display h2" data-ar="أعمال ذات صلة" data-en="Related work">أعمال ذات صلة</h2>
+  </div>
+  <div class="mosaic rev" id="mosaic"></div>
+</div></section>
+
+<!-- خدمات المرحلة نفسها -->
+<section class="sec" style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="svc-group rev" id="siblings"></div>
+</div></section>
+
+<div data-slot="cta"></div>
+<div id="slot-footer"></div>
+
+<script src="assets/site.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const slug=new URLSearchParams(location.search).get('s');
+  const sv=SERVICES.find(x=>x.slug===slug) || SERVICES.find(x=>x.slug==='motion');
+  const ph=PHASES.find(p=>p.items.includes(sv));
+  const set=(id,ar,en)=>{const el=document.getElementById(id); el.dataset.ar=ar; el.dataset.en=en; el.textContent=ar;};
+
+  set('crumb',sv.ar,sv.en);
+  set('title',sv.ar,sv.en);
+  set('lead',sv.lar,sv.len);
+  set('phase',`ضمن مرحلة ${ph.ar}: ${ph.note_ar}`,`Part of ${ph.en}: ${ph.note_en}`);
+  document.title=`${sv.ar} — Blue`;
+  document.querySelector('meta[name=description]').content=sv.lar;
+
+  document.getElementById('inc').innerHTML=sv.inc.map(([ar,en])=>
+    `<li data-ar="${ar}" data-en="${en}">${ar}</li>`).join('');
+
+  const mos=document.getElementById('mosaic');
+  mos.innerHTML=sv.w.map(s=>PROJECTS.find(p=>p.slug===s)).filter(Boolean).map(p=>tile(p)).join('');
+  layMosaic(mos);
+
+  /* بقية خدمات المرحلة نفسها */
+  document.getElementById('siblings').innerHTML=`
+    <div class="svc-head"><h3 data-ar="خدمات أخرى في ${ph.ar}" data-en="More in ${ph.en}">خدمات أخرى في ${ph.ar}</h3><span class="ln"></span></div>
+    <div class="svc-list">${ph.items.filter(x=>x!==sv).map(x=>`
+      <a class="svc-row" href="service.html?s=${x.slug}">
+        <span class="t" data-ar="${x.ar}" data-en="${x.en}">${x.ar}</span>
+        <span class="go" data-ar="التفاصيل ←" data-en="DETAILS →">التفاصيل ←</span>
+      </a>`).join('')}
+    </div>
+    <div style="margin-top:28px"><a href="services.html" class="link-line" data-ar="كل الخدمات" data-en="All services">كل الخدمات</a></div>`;
+
+  if(window.applyLang) window.applyLang();
+  if(window.revealScan) window.revealScan();
+});
+</script>
+</body>
+</html>

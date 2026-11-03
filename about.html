@@ -23,7 +23,7 @@
 <div id="slot-header"></div>
 
 <section class="about-hero">
-  <div class="bgimg"><img src="https://blue-network.sa/wp-content/uploads/2022/09/SHOKRAN_MOVIE-1024x683.png" alt=""></div>
+  <div class="bgimg"><img src="assets/work/shokran.webp" alt=""></div>
   <div class="in"><div class="wrap">
     <div class="crumbs"><a href="index.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a><span>/</span>
       <em style="font-style:normal" data-ar="من نحن" data-en="About">من نحن</em></div>
@@ -104,10 +104,10 @@
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
   const TEAM=[
-    {ar:'المخرج التنفيذي',en:'Executive Director',img:WP+'2022/09/SHOKRAN_MOVIE-1024x683.png'},
-    {ar:'مدير التصوير',en:'Director of Photography',img:WP+'2025/05/Medical_Drama.jpg'},
-    {ar:'مدير الإبداع',en:'Creative Director',img:WP+'2025/05/Asrarco_Home.jpg'},
-    {ar:'رئيس المونتاج',en:'Head of Post',img:WP+'2022/09/04_Se7a_PLUS-1-1024x683.png'}
+    {ar:'المخرج التنفيذي',en:'Executive Director',img:'assets/work/shokran.webp'},
+    {ar:'مدير التصوير',en:'Director of Photography',img:'assets/work/medical-drama.webp'},
+    {ar:'مدير الإبداع',en:'Creative Director',img:'assets/work/asrarco.webp'},
+    {ar:'رئيس المونتاج',en:'Head of Post',img:'assets/work/se7a.webp'}
   ];
   document.getElementById('team').innerHTML = TEAM.map((m,i)=>
     `<div class="member"><img src="${m.img}" alt="" loading="lazy">

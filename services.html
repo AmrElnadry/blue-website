@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       <p class="svc-note" data-ar="${ph.note_ar}" data-en="${ph.note_en}">${ph.note_ar}</p>
       <div class="svc-list">
         ${ph.items.map((sv,i)=>`
-          <a class="svc-row" href="service-motion.html" data-img="${PROJECTS[(gi*3+i)%PROJECTS.length].img}">
+          <a class="svc-row" href="service.html?s=${sv.slug}" data-img="assets/work/${sv.w[0]}.webp">
             <span class="t" data-ar="${sv.ar}" data-en="${sv.en}">${sv.ar}</span>
             <span class="go" data-ar="التفاصيل ←" data-en="DETAILS →">التفاصيل ←</span>
           </a>`).join('')}
@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   (function p(){px+=(tx-px)*.12;py+=(ty-py)*.12;
     peek.style.left=px+'px';peek.style.top=py+'px';requestAnimationFrame(p)})();
 
-  const sizes=['s-wd','s-wd','s-md','s-md','s-md'];
-  document.getElementById('mosaic').innerHTML =
-    PROJECTS.slice(0,5).map((p,i)=>tile(p,sizes[i])).join('');
+  const mos=document.getElementById('mosaic');
+  mos.innerHTML = PROJECTS.slice(0,5).map(p=>tile(p)).join('');
+  layMosaic(mos);
 
   if(window.applyLang) window.applyLang();
 });
