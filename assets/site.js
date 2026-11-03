@@ -413,27 +413,27 @@ const IDEA_SVG = `<svg class="idea" viewBox="0 0 120 120" fill="none" aria-hidde
   <path class="ray r3" d="M76.2 16.4L65.2 29.6" stroke-width="7.5"/>
 </svg>`;
 
-/* لقطات تتعاقب في عدسة الدعوة: رسم تخطيطي (الفكرة) ثم لقطة حقيقية من أعمالنا (الواقع) */
-const CTA_SHOTS=['thaqafiya-eid','muhaidib','medical-drama','zamalek','maiz'];
+/* رسم خطّي متحرك بجانب الدعوة: شخص ← تظهر فكرة ← الخطوط نفسها ترسم كاميرا وموقع تصوير ← REC.
+   كل عنصر يحمل data-s برقم مرحلته، والمراحل تُضاف تباعاً ثم تُمحى وتعاد */
 function runCtaVis(v){
-  const shots=[...v.querySelectorAll('.shot')], tag=v.querySelector('.tag'), tc=v.querySelector('.tc');
-  const setTag=real=>{ tag.dataset.ar=real?'الواقع':'الفكرة'; tag.dataset.en=real?'REALITY':'IDEA';
-    tag.textContent=document.documentElement.lang==='ar'?tag.dataset.ar:tag.dataset.en;
-    v.classList.toggle('real',real); };
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ shots[0].classList.add('in'); setTag(true); return; }
-  let i=0, f=0, live=false, timer;
-  const p2=n=>String(n).padStart(2,'0');
-  setInterval(()=>{ if(!live) return; f++;
-    tc.textContent=`${p2(Math.floor(f/86400))}:${p2(Math.floor(f/1440)%60)}:${p2(Math.floor(f/24)%60)}:${p2(f%24)}`; },1000/24);
-  const step=()=>{
-    shots[i].classList.add('in'); setTag(true);
-    timer=setTimeout(()=>{ shots[i].classList.remove('in'); setTag(false); i=(i+1)%shots.length;
-      timer=setTimeout(step,1500); },3800);
+  const N=6, at=[0,1300,2700,3500,4700,5800], hold=10200;
+  const all=()=>{ for(let n=1;n<=N;n++) v.classList.add('on'+n); };
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ all(); return; }
+  let live=false, ts=[];
+  const clear=()=>{ ts.forEach(clearTimeout); ts=[]; };
+  const cycle=()=>{
+    at.forEach((t,i)=>ts.push(setTimeout(()=>v.classList.add('on'+(i+1)),t)));
+    ts.push(setTimeout(()=>v.classList.add('out'),hold));
+    ts.push(setTimeout(()=>{
+      v.classList.add('reset');
+      for(let n=1;n<=N;n++) v.classList.remove('on'+n);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ v.classList.remove('reset','out'); if(live) cycle(); }));
+    },hold+700));
   };
   new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting && !live){ live=true; v.classList.add('draw'); timer=setTimeout(step,1800); }
-    else if(!e.isIntersecting && live){ live=false; clearTimeout(timer); }
-  }),{threshold:.35}).observe(v);
+    if(e.isIntersecting && !live){ live=true; cycle(); }
+    else if(!e.isIntersecting && live){ live=false; clear(); }
+  }),{threshold:.3}).observe(v);
 }
 
 function buildCTA(){
@@ -458,18 +458,33 @@ function buildCTA(){
         </div>
       </div>
       <div class="cta-vis" aria-hidden="true">
-        <svg class="sk" viewBox="0 0 320 200" preserveAspectRatio="none">
-          <path d="M107 14V186M213 14V186M14 67H306M14 133H306" class="g"/>
-          <path d="M14 150C70 138 120 146 170 140S260 128 306 136"/>
-          <circle cx="248" cy="58" r="16"/>
-          <circle cx="132" cy="92" r="9"/><path d="M132 101V136M132 110L118 126M132 110L146 124M132 136L122 160M132 136L142 160"/>
-          <path d="M176 172H236M226 165L238 172L226 179"/>
+        <svg viewBox="0 0 320 200" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- 1 الأرض والشخص -->
+          <path data-s="1" pathLength="1" d="M20 170H300"/>
+          <circle data-s="1" pathLength="1" cx="206" cy="94" r="9" style="transition-delay:.2s"/>
+          <path data-s="1" pathLength="1" d="M206 103V137M206 137L197 169M206 137L215 169" style="transition-delay:.35s"/>
+          <path data-s="1" pathLength="1" d="M206 112L193 127M206 112L218 100" style="transition-delay:.5s"/>
+          <!-- 2 الفكرة -->
+          <path class="bulb" data-s="2" pathLength="1" d="M199 70C192 66 189 59 190 52C191 43 198 37 206 37S221 43 222 52C223 59 220 66 213 70V75H199Z"/>
+          <path data-s="2" pathLength="1" d="M201 80H211M203 84H209" style="transition-delay:.3s"/>
+          <path class="ray" data-s="2" pathLength="1" d="M206 26V20M226 34L231 29M186 34L181 29M233 52H239M179 52H173" style="transition-delay:.55s"/>
+          <!-- 3 الخيط ينطلق من الفكرة -->
+          <path class="thread" data-s="3" pathLength="1" d="M190 52C150 40 110 50 92 78"/>
+          <!-- 4 الكاميرا على حامل -->
+          <path data-s="4" pathLength="1" d="M48 100H90V128H48Z"/>
+          <circle data-s="4" pathLength="1" cx="58" cy="89" r="10" style="transition-delay:.15s"/>
+          <circle data-s="4" pathLength="1" cx="81" cy="89" r="10" style="transition-delay:.25s"/>
+          <path data-s="4" pathLength="1" d="M90 108L104 102V126L90 120" style="transition-delay:.35s"/>
+          <path data-s="4" pathLength="1" d="M69 128L50 169M69 128V169M69 128L88 169" style="transition-delay:.45s"/>
+          <!-- 5 الموقع: إضاءة وإطار العدسة حول الشخص -->
+          <path data-s="5" pathLength="1" d="M276 169V96M266 169H286M262 96H290L284 76H268Z"/>
+          <path class="beamL" data-s="5" pathLength="1" d="M262 96L232 130" style="transition-delay:.3s"/>
+          <path class="frm" data-s="5" pathLength="1" d="M168 50V40H180M234 40H246V50M246 160V170H234M180 170H168V160" style="transition-delay:.4s"/>
+          <!-- 6 التسجيل -->
+          <path class="beam" data-s="6" pathLength="1" d="M104 102L168 46M104 126L168 166"/>
+          <circle class="dot" cx="24" cy="22" r="4.5"/>
+          <text class="rec" x="34" y="26.5" direction="ltr" text-anchor="start" style="unicode-bidi:plaintext">REC</text>
         </svg>
-        ${CTA_SHOTS.map(k=>`<img class="shot" src="assets/work/${k}.webp" alt="" loading="lazy" decoding="async">`).join('')}
-        <span class="vf"></span>
-        <span class="rec"><i></i>REC</span>
-        <span class="tc">00:00:00:00</span>
-        <span class="tag" data-ar="الفكرة" data-en="IDEA">الفكرة</span>
       </div>
     </div>
   </div></section>`;

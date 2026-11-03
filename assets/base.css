@@ -757,6 +757,7 @@ html[lang="en"] .offrow:hover .cc{transform:translateX(10px)}
 /* html[lang] لتغلب قاعدة html[lang="ar"] .h1 العامة */
 html[lang] .cttl.stick{margin:auto 0;padding-block:clamp(34px,4vw,54px);max-width:none;
   font-size:clamp(1.4rem,2.3vw,2.1rem);line-height:1.35}
+.cttl.stick{text-align:center}
 .cttl.stick span{display:block}
 .cttl.stick .k{color:var(--accent);font-size:1.75em;line-height:1.15;margin-bottom:.12em}
 html[lang="en"] .cttl.stick{max-width:none;line-height:1.08}
@@ -823,43 +824,33 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
   background-repeat:no-repeat;background-position:center}
 @media(max-width:900px){.svc-split{grid-template-columns:1fr}}
 
-/* ── الدعوة: عدسة تتحوّل فيها الفكرة (رسم تخطيطي) إلى واقع (لقطة من أعمالنا) ── */
+/* ── الدعوة: رسم خطّي متحرك — شخص، ففكرة، فكاميرا وموقع وتسجيل ── */
 .cta-in{grid-template-columns:minmax(0,1fr) minmax(0,.95fr)}
-.cta-vis{position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:#0b0d10;
-  border:1px solid var(--line)}
-.cta-vis .sk{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:#3d6f99;stroke-width:1.4;
-  stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.cta-vis .sk *{stroke-dasharray:420;stroke-dashoffset:420}
-.cta-vis .sk .g{stroke:#1d2733;stroke-dasharray:3 6;stroke-dashoffset:0;opacity:0;transition:opacity 1s}
-.cta-vis.draw .sk *{animation:skDraw 1.8s var(--ease) forwards}
-.cta-vis.draw .sk .g{animation:none;opacity:1}
-.cta-vis.draw .sk :nth-child(3){animation-delay:.25s}
-.cta-vis.draw .sk :nth-child(4),.cta-vis.draw .sk :nth-child(5){animation-delay:.5s}
-.cta-vis.draw .sk :nth-child(6){animation-delay:.8s}
-@keyframes skDraw{to{stroke-dashoffset:0}}
-.cta-vis .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  clip-path:inset(0 0 0 100%);transition:clip-path 1.3s var(--ease)}
-html[lang="en"] .cta-vis .shot{clip-path:inset(0 100% 0 0)}
-.cta-vis .shot.in{clip-path:inset(0)!important}
-/* زوايا العدسة */
-.cta-vis .vf{position:absolute;inset:14px;pointer-events:none;z-index:2;
-  background:
-   linear-gradient(#fff,#fff) top left/18px 1.5px, linear-gradient(#fff,#fff) top left/1.5px 18px,
-   linear-gradient(#fff,#fff) top right/18px 1.5px, linear-gradient(#fff,#fff) top right/1.5px 18px,
-   linear-gradient(#fff,#fff) bottom left/18px 1.5px, linear-gradient(#fff,#fff) bottom left/1.5px 18px,
-   linear-gradient(#fff,#fff) bottom right/18px 1.5px, linear-gradient(#fff,#fff) bottom right/1.5px 18px;
-  background-repeat:no-repeat;opacity:.7}
-.cta-vis .rec,.cta-vis .tc,.cta-vis .tag{position:absolute;z-index:3;font-family:var(--en);font-size:11px;
-  letter-spacing:.14em;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-.cta-vis .rec{top:24px;left:28px;display:flex;align-items:center;gap:7px;opacity:.85}
-.cta-vis .rec i{width:7px;height:7px;border-radius:50%;background:#ff3b30;opacity:.25;transition:opacity .4s}
-.cta-vis.real .rec i{opacity:1;animation:recBlink 1s steps(1) infinite}
-@keyframes recBlink{50%{opacity:.2}}
-.cta-vis .tc{bottom:24px;left:28px;opacity:.8;font-variant-numeric:tabular-nums}
-.cta-vis .tag{top:22px;right:28px;padding:4px 10px;border-radius:99px;font-family:var(--ar);letter-spacing:0;
-  font-size:12px;background:rgba(10,12,16,.55);border:1px solid rgba(123,212,255,.35);color:var(--accent2);
-  backdrop-filter:blur(6px);transition:color .4s,border-color .4s}
-html[lang="en"] .cta-vis .tag{font-family:var(--en);letter-spacing:.14em;font-size:11px}
-.cta-vis.real .tag{color:#fff;border-color:rgba(255,255,255,.35)}
+.cta-vis{position:relative;aspect-ratio:16/10}
+.cta-vis svg{width:100%;height:100%;overflow:visible;stroke:#e9e9ec;stroke-width:1.6;transition:opacity .6s}
+/* مخفي حتى مرحلته: الأطراف الدائرية تُظهر نقطة قبل بدء الرسم */
+.cta-vis [data-s]{stroke-dasharray:1;stroke-dashoffset:1;visibility:hidden;
+  transition:stroke-dashoffset 1.2s var(--ease),visibility 0s}
+.cta-vis.on1 [data-s="1"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.on2 [data-s="2"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.on3 [data-s="3"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.on4 [data-s="4"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.on5 [data-s="5"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.on6 [data-s="6"]{stroke-dashoffset:0;visibility:visible}
+.cta-vis.reset [data-s],.cta-vis.reset .bulb,.cta-vis.reset .dot,.cta-vis.reset .rec{transition:none!important}
+.cta-vis.out svg{opacity:0}
+.cta-vis [data-s="2"],.cta-vis [data-s="3"],.cta-vis [data-s="4"],.cta-vis .frm,.cta-vis .beam{stroke:var(--accent2)}
+.cta-vis .bulb{fill:rgba(47,143,224,0);transition:stroke-dashoffset 1.2s var(--ease),fill .8s ease .9s,visibility 0s}
+.cta-vis.on2 .bulb{fill:rgba(47,143,224,.28)}
+.cta-vis.on2 .ray{animation:rayPulse 1.8s ease-in-out 1.4s infinite}
+@keyframes rayPulse{50%{opacity:.35}}
+.cta-vis .thread{stroke-dasharray:1;stroke-width:1.2;opacity:.8}
+.cta-vis .beam,.cta-vis .beamL{stroke-width:1;opacity:.45}
+.cta-vis .beamL{stroke:#e9e9ec}
+.cta-vis .dot{fill:#ff3b30;stroke:none;opacity:0;transition:opacity .4s}
+.cta-vis .rec{fill:#e9e9ec;stroke:none;font-family:var(--en);font-size:11px;letter-spacing:.16em;opacity:0;transition:opacity .4s}
+.cta-vis.on6 .dot{opacity:1;animation:recBlink 1s steps(1) .6s infinite}
+.cta-vis.on6 .rec{opacity:.85}
+@keyframes recBlink{50%{opacity:.15}}
 @media(max-width:900px){.cta-in{grid-template-columns:1fr}.cta-vis{max-width:560px}}
-@media(prefers-reduced-motion:reduce){.cta-vis .sk *{stroke-dashoffset:0}.cta-vis .shot{transition:none}}
+@media(prefers-reduced-motion:reduce){.cta-vis [data-s]{transition:none;visibility:visible}.cta-vis .dot{animation:none!important}}
