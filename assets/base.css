@@ -12,7 +12,6 @@
   --ease:cubic-bezier(.19,1,.22,1);
   --pad:40px;
   /* نسبة أبعاد فيديو الهيرو: 1 مربّع · 1.7778 عريض 16:9 */
-  --vratio:1;
 }
 html[data-navfont='almarai']{--nav:'Almarai',system-ui,sans-serif}
 html[data-navfont='tajawal']{--nav:'Tajawal',system-ui,sans-serif}
