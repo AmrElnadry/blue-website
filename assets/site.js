@@ -413,25 +413,27 @@ const IDEA_SVG = `<svg class="idea" viewBox="0 0 120 120" fill="none" aria-hidde
   <path class="ray r3" d="M76.2 16.4L65.2 29.6" stroke-width="7.5"/>
 </svg>`;
 
-/* رسم يدوي متحرك بجانب الدعوة. خط واحد متصل يرسم اللمبة (الفكرة)، ثم يتفكّك ويسافر
+/* رسم تجريدي متحرك بجانب الدعوة. خط واحد متصل يرسم اللمبة (الفكرة)، ثم يتفكّك ويسافر
    فيرسم الكاميرا، فيظهر موقع التصوير وREC. وفي الحلقة يعود الخط من الكاميرا ليصير فكرة جديدة */
 /* خط واحد بلا رفع للقلم: المتصفح يعيد نمط التقطيع عند كل M، فيجب أن يبقى مساراً واحداً */
 const CTA_LINE={
-  bulb:'M200 73C199 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 213 66 212 73L200 73L201 78L211 78',
-  thread:'C196 84 180 66 160 52C142 40 124 46 128 60C132 72 150 66 146 54C141 41 112 44 98 60C88 70 78 78 71 89',
-  cam:'A10 10 0 1 1 91 89A10 10 0 1 1 71 89L68 89A10 10 0 1 0 48 89A10 10 0 1 0 68 89L66 100L48 100L48 128L69 128'+
-      'L50 169L69 128L69 169L69 128L88 169L69 128L90 128L90 120L104 126L104 102L90 108L90 100L66 100'
+  bulb:'M200 73C198 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 214 66 212 73C208 74 204 74 200 73C201 75 201 77 201 78C204 79 208 79 211 78',
+  thread:'C192 88 172 38 132 48C110 54 96 72 92 98',
+  /* بكرتان كقوسين فوق الجسم، ثم الجسم والعدسة، وينتهي حيث بدأ — بلا تقاطعات */
+  cam:'C91 85 74 84 72 97C71 98 70 98 69 97C68 85 52 85 50 98C49 108 47 118 49 127C64 129 78 127 92 128'+
+      'C92 125 92 123 92 121C97 123 102 126 106 128C107 118 105 108 106 98C101 101 96 103 92 106C92 103 93 101 92 98'
 };
 function runCtaVis(v){
   const line=v.querySelector('.line');
   const len=d=>{ const t=document.createElementNS('http://www.w3.org/2000/svg','path');
     t.setAttribute('d',d); line.parentNode.appendChild(t); const L=t.getTotalLength(); t.remove(); return L; };
-  const Lb=len(CTA_LINE.bulb), Lt=len('M211 78'+CTA_LINE.thread), T=Lb+Lt+len('M71 89'+CTA_LINE.cam);
+  const Lb=len(CTA_LINE.bulb), Lt=len('M211 78'+CTA_LINE.thread), T=Lb+Lt+len('M92 98'+CTA_LINE.cam);
   /* نافذة مرئية [s,e] تنزلق على الخط */
-  const win=(s,e)=>{ line.style.strokeDasharray=`${Math.max(e-s,.001)} ${T*3}`; line.style.strokeDashoffset=-s; };
+  const win=(s,e)=>{ line.style.visibility=e-s<.5?'hidden':'visible';
+    line.style.strokeDasharray=`${Math.max(e-s,.001)} ${T*3}`; line.style.strokeDashoffset=-s; };
   const on=(c,x=true)=>v.classList.toggle(c,x);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-    v.querySelector('animate')?.remove(); win(Lb+Lt,T); ['fig','set','rec'].forEach(c=>on(c)); return;
+    win(Lb+Lt,T); ['fig','set','rec'].forEach(c=>on(c)); return;
   }
   win(0,0);
   const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -478,22 +480,19 @@ function buildCTA(){
       </div>
       <div class="cta-vis" aria-hidden="true">
         <svg viewBox="0 0 320 200" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <defs><filter id="cta-hand" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="2">
-              <animate attributeName="seed" values="2;5;9;13" dur=".5s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>
-            <feDisplacementMap in="SourceGraphic" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
-          <g filter="url(#cta-hand)">
-            <path class="d fig" pathLength="1" d="M18 170C70 169 120 171 170 170S260 169 302 171"/>
+          <g>
+            <path class="d fig" pathLength="1" d="M22 170C80 167 140 172 196 169C240 167 276 171 300 169"/>
             <path class="d fig" pathLength="1" style="transition-delay:.2s" d="M206 85C211 85 215 89 215 94C215 99 211 103 206 103C200 103 197 99 197 94C197 89 201 85 207 86"/>
-            <path class="d fig" pathLength="1" style="transition-delay:.4s" d="M206 103C206 115 207 126 206 137M206 137C203 147 200 158 197 169M206 137C209 148 212 158 216 169"/>
-            <path class="d fig" pathLength="1" style="transition-delay:.55s" d="M206 112C201 117 197 122 193 128M206 112C210 108 214 104 218 99"/>
+            <path class="d fig" pathLength="1" style="transition-delay:.4s" d="M206 103C204 114 208 126 206 137C203 148 199 158 196 169M206 137C210 147 213 158 217 169"/>
+            <path class="d fig" pathLength="1" style="transition-delay:.55s" d="M193 129C197 123 201 116 206 112C211 108 215 104 219 98"/>
             <path class="glow" d="M200 73C199 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 213 66 212 73Z"/>
             <path class="d ray" pathLength="1" d="M206 27V20M225 33L230 28M187 33L182 28M232 51H239M180 51H173"/>
             <path class="line" d="${CTA_LINE.bulb}${CTA_LINE.thread}${CTA_LINE.cam}"/>
-            <path class="d set" pathLength="1" d="M276 169C276 145 277 120 276 96M265 170H287M262 96L290 96L284 76L268 76Z"/>
-            <path class="d set dim" pathLength="1" style="transition-delay:.3s" d="M262 98C252 108 243 119 233 131"/>
-            <path class="d set acc" pathLength="1" style="transition-delay:.45s" d="M168 50V40H180M234 40H246V50M246 160V170H234M180 170H168V160"/>
-            <path class="d rec acc dim" pathLength="1" d="M104 102C125 84 146 65 168 46M104 126C125 139 147 153 168 166"/>
+            <path class="d set acc" pathLength="1" d="M70 129C66 144 60 157 54 169M70 129C74 144 80 157 86 169"/>
+            <path class="d set" pathLength="1" style="transition-delay:.2s" d="M266 170C272 168 280 168 287 170M276 169C275 145 278 120 276 97C268 98 263 97 261 96C264 89 266 82 268 76C273 75 279 75 284 76C286 83 288 90 290 96C286 97 281 97 276 97"/>
+            <path class="d set dim" pathLength="1" style="transition-delay:.3s" d="M262 99C254 108 244 118 234 129"/>
+            <path class="d set acc" pathLength="1" style="transition-delay:.45s" d="M168 51C168 47 168 43 169 40C172 40 176 40 180 40M234 40C238 40 242 40 246 41C246 44 246 47 246 51M246 158C246 162 246 166 245 169C242 170 238 170 234 170M180 170C176 170 172 170 169 169C168 166 168 162 168 158"/>
+            <path class="d rec acc dim" pathLength="1" d="M107 99C126 82 146 64 166 48M107 127C126 140 146 152 166 164"/>
           </g>
           <circle class="dot" cx="24" cy="22" r="4.5"/>
           <text class="rtx" x="34" y="26.5" direction="ltr" text-anchor="start">REC</text>

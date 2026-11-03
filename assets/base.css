@@ -824,10 +824,10 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
   background-repeat:no-repeat;background-position:center}
 @media(max-width:900px){.svc-split{grid-template-columns:1fr}}
 
-/* ── الدعوة: رسم يدوي متحرك — خط الفكرة يتفكّك ويرسم الكاميرا ── */
+/* ── الدعوة: رسم تجريدي بانحناءات يدوية — خط الفكرة يتفكّك ويرسم الكاميرا ── */
 .cta-in{grid-template-columns:minmax(0,1fr) minmax(0,.95fr)}
 .cta-vis{position:relative;aspect-ratio:16/10}
-.cta-vis svg{width:100%;height:100%;overflow:visible;stroke:#ecebe6;stroke-width:1.9}
+.cta-vis svg{width:100%;height:100%;overflow:visible;stroke:#ecebe6;stroke-width:2}
 /* الخطوط تُرسم وتُمحى بانتقال؛ مخفية قبل البدء حتى لا تظهر نقطة الطرف الدائري */
 .cta-vis .d{stroke-dasharray:1;stroke-dashoffset:1;visibility:hidden;
   transition:stroke-dashoffset 1.1s var(--ease),visibility 0s 1.1s}
