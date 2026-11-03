@@ -18,14 +18,14 @@ const WP = 'https://blue-network.sa/wp-content/uploads/';
 
 /* الأعمال: من بروفايل 2026 وحساب Vimeo. الغلاف في assets/work/<slug>.webp */
 const PROJECTS = [
- {slug:'muhaidib', vid:'1239458890', k:'ads', y:2026, d:41, r:'3840/2160',
-  ar:'حملة المهيدب لطب الأسنان', en:'Al Muhaidib Dental Campaign', cl_ar:'مجموعة المهيدب', cl_en:'Al Muhaidib Group',
-  sar:'حملة ترويجية لمستشفى المهيدب لطب الأسنان تسلّط الضوء على مشكلات الأسنان الشائعة وأهمية العلاج المبكر وتقويم الأسنان.',
-  sen:'A promotional campaign for Al Muhaidib Dental Hospital highlighting common dental problems and the importance of early treatment and orthodontic care.'},
  {slug:'thaqafiya-eid', vid:'1239459147', k:'prog', y:2026, d:89, r:'3840/2160',
   ar:'برنامج «عِد» — قناة الثقافية', en:'‘Id’ — Al Thaqafiya Channel', cl_ar:'قناة الثقافية', cl_en:'Al Thaqafiya Channel',
   sar:'برنامج تلفزيوني لقناة الثقافية يستكشف المساجلات الشعرية التاريخية بين شاعرين، ويتتبّع حياتهما ومسيرتهما الإبداعية وتطوّر الخصومة الأدبية بينهما.',
   sen:'A TV programme for Al Thaqafiya Channel exploring historic poetic rivalries between two poets, tracing their lives, creative journeys and the evolution of their literary conflict.'},
+ {slug:'muhaidib', vid:'1239458890', k:'ads', y:2026, d:41, r:'3840/2160',
+  ar:'حملة المهيدب لطب الأسنان', en:'Al Muhaidib Dental Campaign', cl_ar:'مجموعة المهيدب', cl_en:'Al Muhaidib Group',
+  sar:'حملة ترويجية لمستشفى المهيدب لطب الأسنان تسلّط الضوء على مشكلات الأسنان الشائعة وأهمية العلاج المبكر وتقويم الأسنان.',
+  sen:'A promotional campaign for Al Muhaidib Dental Hospital highlighting common dental problems and the importance of early treatment and orthodontic care.'},
  {slug:'wasad', vid:'1239461716', k:'corp', y:2026, d:236, r:'1920/1080',
   ar:'وثائقي وسد الصناعية', en:'Wasad Industrial Documentary', cl_ar:'وسد الصناعية', cl_en:'Wasad Industrial',
   sar:'فيلم ترويجي لشركة وسد الصناعية يستعرض مشاريعها الكبرى في أنحاء المملكة، وقدراتها وخبرتها وأثرها الصناعي.',
@@ -413,9 +413,32 @@ const IDEA_SVG = `<svg class="idea" viewBox="0 0 120 120" fill="none" aria-hidde
   <path class="ray r3" d="M76.2 16.4L65.2 29.6" stroke-width="7.5"/>
 </svg>`;
 
+/* لقطات تتعاقب في عدسة الدعوة: رسم تخطيطي (الفكرة) ثم لقطة حقيقية من أعمالنا (الواقع) */
+const CTA_SHOTS=['thaqafiya-eid','muhaidib','medical-drama','zamalek','maiz'];
+function runCtaVis(v){
+  const shots=[...v.querySelectorAll('.shot')], tag=v.querySelector('.tag'), tc=v.querySelector('.tc');
+  const setTag=real=>{ tag.dataset.ar=real?'الواقع':'الفكرة'; tag.dataset.en=real?'REALITY':'IDEA';
+    tag.textContent=document.documentElement.lang==='ar'?tag.dataset.ar:tag.dataset.en;
+    v.classList.toggle('real',real); };
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ shots[0].classList.add('in'); setTag(true); return; }
+  let i=0, f=0, live=false, timer;
+  const p2=n=>String(n).padStart(2,'0');
+  setInterval(()=>{ if(!live) return; f++;
+    tc.textContent=`${p2(Math.floor(f/86400))}:${p2(Math.floor(f/1440)%60)}:${p2(Math.floor(f/24)%60)}:${p2(f%24)}`; },1000/24);
+  const step=()=>{
+    shots[i].classList.add('in'); setTag(true);
+    timer=setTimeout(()=>{ shots[i].classList.remove('in'); setTag(false); i=(i+1)%shots.length;
+      timer=setTimeout(step,1500); },3800);
+  };
+  new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting && !live){ live=true; v.classList.add('draw'); timer=setTimeout(step,1800); }
+    else if(!e.isIntersecting && live){ live=false; clearTimeout(timer); }
+  }),{threshold:.35}).observe(v);
+}
+
 function buildCTA(){
   return `<section class="cta rev"><div class="wrap">
-    <div class="cta-in nocon">
+    <div class="cta-in">
       <div class="cta-txt">
         <h2 class="big">
           <span data-ar="لديك فكرة؟" data-en="GOT AN IDEA?">لديك فكرة؟</span>
@@ -433,6 +456,20 @@ function buildCTA(){
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Zm5.6 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1 0-1.5.8-2.2 1-2.5.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.2.4 0 .7l-.4.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l.9-1c.2-.3.4-.2.7-.1l2.1 1c.3.1.5.2.6.3.1.2.1.8-.1 1.5Z"/></svg>
             <span data-ar="واتساب مباشر" data-en="WhatsApp us">واتساب مباشر</span></a>
         </div>
+      </div>
+      <div class="cta-vis" aria-hidden="true">
+        <svg class="sk" viewBox="0 0 320 200" preserveAspectRatio="none">
+          <path d="M107 14V186M213 14V186M14 67H306M14 133H306" class="g"/>
+          <path d="M14 150C70 138 120 146 170 140S260 128 306 136"/>
+          <circle cx="248" cy="58" r="16"/>
+          <circle cx="132" cy="92" r="9"/><path d="M132 101V136M132 110L118 126M132 110L146 124M132 136L122 160M132 136L142 160"/>
+          <path d="M176 172H236M226 165L238 172L226 179"/>
+        </svg>
+        ${CTA_SHOTS.map(k=>`<img class="shot" src="assets/work/${k}.webp" alt="" loading="lazy" decoding="async">`).join('')}
+        <span class="vf"></span>
+        <span class="rec"><i></i>REC</span>
+        <span class="tc">00:00:00:00</span>
+        <span class="tag" data-ar="الفكرة" data-en="IDEA">الفكرة</span>
       </div>
     </div>
   </div></section>`;
@@ -497,6 +534,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('[data-slot="logos"]').forEach(s=>s.outerHTML=buildLogos());
   document.querySelectorAll('[data-slot="stages"]').forEach(s=>s.outerHTML=buildStages());
   document.querySelectorAll('[data-slot="cta"]').forEach(s=>s.outerHTML=buildCTA());
+  document.querySelectorAll('.cta-vis').forEach(runCtaVis);
   const fSlot=document.getElementById('slot-footer'); if(fSlot) fSlot.outerHTML=buildFooter();
   document.body.insertAdjacentHTML('beforeend',buildMockbar());
 
