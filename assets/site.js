@@ -192,19 +192,24 @@ const FIELDS_EN = ['Production','Short Films','Graphics','Commercials','Drama',
 /* نمط غير منتظم حتى لا تلاحظ العين تكراراً */
 const OPACITY  = [1,.5,.75,1,.5,1,.75,.5,1,.75];
 
-/* شعارات العملاء من بروفايل 2026 — نسخ بيضاء شفافة في assets/clients */
+/* شعارات العملاء: نسخ بيضاء شفافة في assets/clients.
+   من ليس له ملف شعار (بلا f) يظهر اسمه نصاً إلى أن يتوفّر الشعار */
 const CLIENTS = [
- {f:'moc',ar:'وزارة الثقافة',en:'Ministry of Culture'},{f:'thaqafiya',ar:'قناة الثقافية',en:'Al Thaqafiya'},
+ {f:'moc',ar:'وزارة الثقافة',en:'Ministry of Culture'},{ar:'MBC',en:'MBC'},{f:'thaqafiya',ar:'قناة الثقافية',en:'Al Thaqafiya'},
  {f:'wasad',ar:'وسد',en:'Wasad'},{f:'almuhaidib',ar:'مجموعة المهيدب',en:'Al Muhaidib Group'},
  {f:'alghad',ar:'كلية الغد',en:'Alghad College'},{f:'hemmtk',ar:'همتك',en:'Hemmtk'},
- {f:'sapac',ar:'سبك',en:'SAPAC'},{f:'tasooma',ar:'تاسومة',en:'Tasooma'},
+ {f:'sapac',ar:'سبك',en:'SAPAC'},{f:'asrarco',ar:'أسراركو',en:'Asrarco'},{f:'tasooma',ar:'تاسومة',en:'Tasooma'},
  {f:'maiz',ar:'مايز',en:'MAIZ'},{f:'alkhozama',ar:'الخزامى للاستثمار',en:'Al Khozama Investment'},
  {f:'holiday-inn',ar:'هوليداي إن',en:'Holiday Inn'},{f:'arabian-oud',ar:'العربية للعود',en:'Arabian Oud'},
  {f:'makhazen-alenayah',ar:'مخازن العناية',en:'Makhazen Alenayah'},{f:'maknoon-alsharq',ar:'مكنون الشرق',en:'Maknoon Alsharq'},
  {f:'alwaqea',ar:'الواقع',en:'Alwaqea'},{f:'index',ar:'إندكس',en:'INDEX'},
- {f:'almaha',ar:'المها للإنتاج',en:'Al Maha Production'},{f:'dar-sas',ar:'دار ساس الأمنية',en:'Dar SAS Security'}
+ {f:'almaha',ar:'المها للإنتاج',en:'Al Maha Production'},{f:'dar-sas',ar:'دار ساس الأمنية',en:'Dar SAS Security'},
+ {ar:'HIKAYAT',en:'HIKAYAT'},{ar:'SE7A PLUS',en:'SE7A PLUS'},{ar:'THAAD',en:'THAAD'},
+ {ar:'FAR7A',en:'FAR7A'},{ar:'NOR EL DONYA',en:'NOR EL DONYA'}
 ];
-const logoImg = c => `<img src="assets/clients/${c.f}.webp" alt="${c.en}" loading="lazy" decoding="async">`;
+const logoImg = c => c.f
+  ? `<img src="assets/clients/${c.f}.webp" alt="${c.en}" loading="lazy" decoding="async">`
+  : `<b class="wm">${c.en}</b>`;
 
 /* ─────────── الترويسة ─────────── */
 const NAV = [
