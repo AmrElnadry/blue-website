@@ -413,27 +413,46 @@ const IDEA_SVG = `<svg class="idea" viewBox="0 0 120 120" fill="none" aria-hidde
   <path class="ray r3" d="M76.2 16.4L65.2 29.6" stroke-width="7.5"/>
 </svg>`;
 
-/* رسم خطّي متحرك بجانب الدعوة: شخص ← تظهر فكرة ← الخطوط نفسها ترسم كاميرا وموقع تصوير ← REC.
-   كل عنصر يحمل data-s برقم مرحلته، والمراحل تُضاف تباعاً ثم تُمحى وتعاد */
+/* رسم يدوي متحرك بجانب الدعوة. خط واحد متصل يرسم اللمبة (الفكرة)، ثم يتفكّك ويسافر
+   فيرسم الكاميرا، فيظهر موقع التصوير وREC. وفي الحلقة يعود الخط من الكاميرا ليصير فكرة جديدة */
+/* خط واحد بلا رفع للقلم: المتصفح يعيد نمط التقطيع عند كل M، فيجب أن يبقى مساراً واحداً */
+const CTA_LINE={
+  bulb:'M200 73C199 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 213 66 212 73L200 73L201 78L211 78',
+  thread:'C196 84 180 66 160 52C142 40 124 46 128 60C132 72 150 66 146 54C141 41 112 44 98 60C88 70 78 78 71 89',
+  cam:'A10 10 0 1 1 91 89A10 10 0 1 1 71 89L68 89A10 10 0 1 0 48 89A10 10 0 1 0 68 89L66 100L48 100L48 128L69 128'+
+      'L50 169L69 128L69 169L69 128L88 169L69 128L90 128L90 120L104 126L104 102L90 108L90 100L66 100'
+};
 function runCtaVis(v){
-  const N=6, at=[0,1300,2700,3500,4700,5800], hold=10200;
-  const all=()=>{ for(let n=1;n<=N;n++) v.classList.add('on'+n); };
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ all(); return; }
-  let live=false, ts=[];
-  const clear=()=>{ ts.forEach(clearTimeout); ts=[]; };
-  const cycle=()=>{
-    at.forEach((t,i)=>ts.push(setTimeout(()=>v.classList.add('on'+(i+1)),t)));
-    ts.push(setTimeout(()=>v.classList.add('out'),hold));
-    ts.push(setTimeout(()=>{
-      v.classList.add('reset');
-      for(let n=1;n<=N;n++) v.classList.remove('on'+n);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{ v.classList.remove('reset','out'); if(live) cycle(); }));
-    },hold+700));
+  const line=v.querySelector('.line');
+  const len=d=>{ const t=document.createElementNS('http://www.w3.org/2000/svg','path');
+    t.setAttribute('d',d); line.parentNode.appendChild(t); const L=t.getTotalLength(); t.remove(); return L; };
+  const Lb=len(CTA_LINE.bulb), Lt=len('M211 78'+CTA_LINE.thread), T=Lb+Lt+len('M71 89'+CTA_LINE.cam);
+  /* نافذة مرئية [s,e] تنزلق على الخط */
+  const win=(s,e)=>{ line.style.strokeDasharray=`${Math.max(e-s,.001)} ${T*3}`; line.style.strokeDashoffset=-s; };
+  const on=(c,x=true)=>v.classList.toggle(c,x);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    v.querySelector('animate')?.remove(); win(Lb+Lt,T); ['fig','set','rec'].forEach(c=>on(c)); return;
+  }
+  win(0,0);
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const tween=(a,b,ms)=>new Promise(r=>{ const t0=performance.now();
+    const f=now=>{ const k=Math.min((now-t0)/ms,1), q=ease(k);
+      win(a[0]+(b[0]-a[0])*q, a[1]+(b[1]-a[1])*q); k<1?requestAnimationFrame(f):r(); };
+    requestAnimationFrame(f); });
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const play=async()=>{
+    on('fig'); await wait(1300);
+    await tween([0,0],[0,Lb],1200);                         // الفكرة تُرسم
+    for(;;){
+      on('lit'); await wait(1700); on('lit',false); await wait(250);
+      await tween([0,Lb],[Lb+Lt,T],2400);                   // تتفكّك وترسم الكاميرا
+      on('set'); await wait(900); on('rec'); await wait(3200);
+      on('rec',false); await wait(450); on('set',false); await wait(800);
+      await tween([Lb+Lt,T],[0,Lb],2400);                   // تعود فكرة جديدة
+    }
   };
-  new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting && !live){ live=true; cycle(); }
-    else if(!e.isIntersecting && live){ live=false; clear(); }
-  }),{threshold:.3}).observe(v);
+  const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ io.disconnect(); play(); } },{threshold:.3});
+  io.observe(v);
 }
 
 function buildCTA(){
@@ -459,31 +478,25 @@ function buildCTA(){
       </div>
       <div class="cta-vis" aria-hidden="true">
         <svg viewBox="0 0 320 200" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <!-- 1 الأرض والشخص -->
-          <path data-s="1" pathLength="1" d="M20 170H300"/>
-          <circle data-s="1" pathLength="1" cx="206" cy="94" r="9" style="transition-delay:.2s"/>
-          <path data-s="1" pathLength="1" d="M206 103V137M206 137L197 169M206 137L215 169" style="transition-delay:.35s"/>
-          <path data-s="1" pathLength="1" d="M206 112L193 127M206 112L218 100" style="transition-delay:.5s"/>
-          <!-- 2 الفكرة -->
-          <path class="bulb" data-s="2" pathLength="1" d="M199 70C192 66 189 59 190 52C191 43 198 37 206 37S221 43 222 52C223 59 220 66 213 70V75H199Z"/>
-          <path data-s="2" pathLength="1" d="M201 80H211M203 84H209" style="transition-delay:.3s"/>
-          <path class="ray" data-s="2" pathLength="1" d="M206 26V20M226 34L231 29M186 34L181 29M233 52H239M179 52H173" style="transition-delay:.55s"/>
-          <!-- 3 الخيط ينطلق من الفكرة -->
-          <path class="thread" data-s="3" pathLength="1" d="M190 52C150 40 110 50 92 78"/>
-          <!-- 4 الكاميرا على حامل -->
-          <path data-s="4" pathLength="1" d="M48 100H90V128H48Z"/>
-          <circle data-s="4" pathLength="1" cx="58" cy="89" r="10" style="transition-delay:.15s"/>
-          <circle data-s="4" pathLength="1" cx="81" cy="89" r="10" style="transition-delay:.25s"/>
-          <path data-s="4" pathLength="1" d="M90 108L104 102V126L90 120" style="transition-delay:.35s"/>
-          <path data-s="4" pathLength="1" d="M69 128L50 169M69 128V169M69 128L88 169" style="transition-delay:.45s"/>
-          <!-- 5 الموقع: إضاءة وإطار العدسة حول الشخص -->
-          <path data-s="5" pathLength="1" d="M276 169V96M266 169H286M262 96H290L284 76H268Z"/>
-          <path class="beamL" data-s="5" pathLength="1" d="M262 96L232 130" style="transition-delay:.3s"/>
-          <path class="frm" data-s="5" pathLength="1" d="M168 50V40H180M234 40H246V50M246 160V170H234M180 170H168V160" style="transition-delay:.4s"/>
-          <!-- 6 التسجيل -->
-          <path class="beam" data-s="6" pathLength="1" d="M104 102L168 46M104 126L168 166"/>
+          <defs><filter id="cta-hand" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="2">
+              <animate attributeName="seed" values="2;5;9;13" dur=".5s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+          <g filter="url(#cta-hand)">
+            <path class="d fig" pathLength="1" d="M18 170C70 169 120 171 170 170S260 169 302 171"/>
+            <path class="d fig" pathLength="1" style="transition-delay:.2s" d="M206 85C211 85 215 89 215 94C215 99 211 103 206 103C200 103 197 99 197 94C197 89 201 85 207 86"/>
+            <path class="d fig" pathLength="1" style="transition-delay:.4s" d="M206 103C206 115 207 126 206 137M206 137C203 147 200 158 197 169M206 137C209 148 212 158 216 169"/>
+            <path class="d fig" pathLength="1" style="transition-delay:.55s" d="M206 112C201 117 197 122 193 128M206 112C210 108 214 104 218 99"/>
+            <path class="glow" d="M200 73C199 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 213 66 212 73Z"/>
+            <path class="d ray" pathLength="1" d="M206 27V20M225 33L230 28M187 33L182 28M232 51H239M180 51H173"/>
+            <path class="line" d="${CTA_LINE.bulb}${CTA_LINE.thread}${CTA_LINE.cam}"/>
+            <path class="d set" pathLength="1" d="M276 169C276 145 277 120 276 96M265 170H287M262 96L290 96L284 76L268 76Z"/>
+            <path class="d set dim" pathLength="1" style="transition-delay:.3s" d="M262 98C252 108 243 119 233 131"/>
+            <path class="d set acc" pathLength="1" style="transition-delay:.45s" d="M168 50V40H180M234 40H246V50M246 160V170H234M180 170H168V160"/>
+            <path class="d rec acc dim" pathLength="1" d="M104 102C125 84 146 65 168 46M104 126C125 139 147 153 168 166"/>
+          </g>
           <circle class="dot" cx="24" cy="22" r="4.5"/>
-          <text class="rec" x="34" y="26.5" direction="ltr" text-anchor="start" style="unicode-bidi:plaintext">REC</text>
+          <text class="rtx" x="34" y="26.5" direction="ltr" text-anchor="start">REC</text>
         </svg>
       </div>
     </div>

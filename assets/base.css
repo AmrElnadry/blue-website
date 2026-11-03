@@ -824,33 +824,27 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
   background-repeat:no-repeat;background-position:center}
 @media(max-width:900px){.svc-split{grid-template-columns:1fr}}
 
-/* ── الدعوة: رسم خطّي متحرك — شخص، ففكرة، فكاميرا وموقع وتسجيل ── */
+/* ── الدعوة: رسم يدوي متحرك — خط الفكرة يتفكّك ويرسم الكاميرا ── */
 .cta-in{grid-template-columns:minmax(0,1fr) minmax(0,.95fr)}
 .cta-vis{position:relative;aspect-ratio:16/10}
-.cta-vis svg{width:100%;height:100%;overflow:visible;stroke:#e9e9ec;stroke-width:1.6;transition:opacity .6s}
-/* مخفي حتى مرحلته: الأطراف الدائرية تُظهر نقطة قبل بدء الرسم */
-.cta-vis [data-s]{stroke-dasharray:1;stroke-dashoffset:1;visibility:hidden;
-  transition:stroke-dashoffset 1.2s var(--ease),visibility 0s}
-.cta-vis.on1 [data-s="1"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.on2 [data-s="2"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.on3 [data-s="3"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.on4 [data-s="4"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.on5 [data-s="5"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.on6 [data-s="6"]{stroke-dashoffset:0;visibility:visible}
-.cta-vis.reset [data-s],.cta-vis.reset .bulb,.cta-vis.reset .dot,.cta-vis.reset .rec{transition:none!important}
-.cta-vis.out svg{opacity:0}
-.cta-vis [data-s="2"],.cta-vis [data-s="3"],.cta-vis [data-s="4"],.cta-vis .frm,.cta-vis .beam{stroke:var(--accent2)}
-.cta-vis .bulb{fill:rgba(47,143,224,0);transition:stroke-dashoffset 1.2s var(--ease),fill .8s ease .9s,visibility 0s}
-.cta-vis.on2 .bulb{fill:rgba(47,143,224,.28)}
-.cta-vis.on2 .ray{animation:rayPulse 1.8s ease-in-out 1.4s infinite}
-@keyframes rayPulse{50%{opacity:.35}}
-.cta-vis .thread{stroke-dasharray:1;stroke-width:1.2;opacity:.8}
-.cta-vis .beam,.cta-vis .beamL{stroke-width:1;opacity:.45}
-.cta-vis .beamL{stroke:#e9e9ec}
-.cta-vis .dot{fill:#ff3b30;stroke:none;opacity:0;transition:opacity .4s}
-.cta-vis .rec{fill:#e9e9ec;stroke:none;font-family:var(--en);font-size:11px;letter-spacing:.16em;opacity:0;transition:opacity .4s}
-.cta-vis.on6 .dot{opacity:1;animation:recBlink 1s steps(1) .6s infinite}
-.cta-vis.on6 .rec{opacity:.85}
+.cta-vis svg{width:100%;height:100%;overflow:visible;stroke:#ecebe6;stroke-width:1.9}
+/* الخطوط تُرسم وتُمحى بانتقال؛ مخفية قبل البدء حتى لا تظهر نقطة الطرف الدائري */
+.cta-vis .d{stroke-dasharray:1;stroke-dashoffset:1;visibility:hidden;
+  transition:stroke-dashoffset 1.1s var(--ease),visibility 0s 1.1s}
+.cta-vis.fig .fig,.cta-vis.lit .ray,.cta-vis.set .set,.cta-vis.rec .rec{stroke-dashoffset:0;visibility:visible;
+  transition:stroke-dashoffset 1.1s var(--ease),visibility 0s}
+.cta-vis .line,.cta-vis .ray,.cta-vis .acc{stroke:var(--accent2)}
+.cta-vis .line{stroke-width:2.1}
+.cta-vis .dim{stroke-width:1.2;opacity:.5}
+.cta-vis .ray{transition-duration:.6s}
+.cta-vis.lit .ray{animation:rayPulse 1.2s ease-in-out .6s infinite}
+@keyframes rayPulse{50%{opacity:.3}}
+.cta-vis .glow{fill:var(--accent);stroke:none;opacity:0;transition:opacity .7s ease}
+.cta-vis.lit .glow{opacity:.3}
+.cta-vis .dot{fill:#ff3b30;opacity:0;transition:opacity .3s}
+.cta-vis .rtx{fill:#ecebe6;stroke:none;font-family:var(--en);font-size:11px;letter-spacing:.16em;opacity:0;transition:opacity .3s}
+.cta-vis.rec .dot{opacity:1;animation:recBlink 1s steps(1) .4s infinite}
+.cta-vis.rec .rtx{opacity:.85}
 @keyframes recBlink{50%{opacity:.15}}
 @media(max-width:900px){.cta-in{grid-template-columns:1fr}.cta-vis{max-width:560px}}
-@media(prefers-reduced-motion:reduce){.cta-vis [data-s]{transition:none;visibility:visible}.cta-vis .dot{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.cta-vis .d{transition:none}.cta-vis .dot,.cta-vis .ray{animation:none!important}}
