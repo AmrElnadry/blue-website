@@ -75,19 +75,6 @@
   </div>
 </div></section>
 
-<!-- الفريق -->
-<section class="sec"><div class="wrap">
-  <div class="rev" style="margin-bottom:42px">
-    <p class="eyebrow" data-ar="الفريق" data-en="The Team">الفريق</p>
-    <h2 class="display h2" data-ar="الوجوه خلف الكاميرا" data-en="The faces behind the camera">الوجوه خلف الكاميرا</h2>
-  </div>
-  <div class="team rev" id="team"></div>
-  <p class="muted rev" style="margin-top:20px;font-size:12.5px"
-     data-ar="— صور مؤقتة، ستُستبدل بصور الفريق الحقيقية من لوحة التحكم"
-     data-en="— Placeholder images, to be replaced from the dashboard">
-    — صور مؤقتة، ستُستبدل بصور الفريق الحقيقية من لوحة التحكم</p>
-</div></section>
-
 <!-- العملاء -->
 <section class="sec" style="border-top:1px solid var(--line)"><div class="wrap">
   <div class="rev" style="margin-bottom:42px">
@@ -103,16 +90,6 @@
 <script src="assets/site.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
-  const TEAM=[
-    {ar:'المخرج التنفيذي',en:'Executive Director',img:'assets/work/shokran.webp'},
-    {ar:'مدير التصوير',en:'Director of Photography',img:'assets/work/medical-drama.webp'},
-    {ar:'مدير الإبداع',en:'Creative Director',img:'assets/work/asrarco.webp'},
-    {ar:'رئيس المونتاج',en:'Head of Post',img:'assets/work/se7a.webp'}
-  ];
-  document.getElementById('team').innerHTML = TEAM.map((m,i)=>
-    `<div class="member"><img src="${m.img}" alt="" loading="lazy">
-      <span class="nm"><b>—</b><span data-ar="${m.ar}" data-en="${m.en}">${m.ar}</span></span></div>`).join('');
-
   document.getElementById('logos').innerHTML = CLIENTS.map(c=>`<div>${logoImg(c)}</div>`).join('');
 });
 </script>
