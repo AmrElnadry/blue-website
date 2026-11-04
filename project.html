@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const [w,h]=p.r.split('/').map(Number);
   const pv=document.getElementById('pv');
   pv.style.aspectRatio=p.r; pv.style.setProperty('--r',w/h); pv.classList.toggle('tall',h>w);
-  pv.innerHTML=`<iframe src="https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0"
+  pv.innerHTML=`<iframe src="${p.gd?`https://drive.google.com/file/d/${p.gd}/preview`:`https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0`}"
     allow="fullscreen;picture-in-picture" allowfullscreen title="${p.en}"></iframe>`;
 
   document.title=`${p.ar} — Blue`;

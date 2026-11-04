@@ -26,6 +26,10 @@ const PROJECTS = [
   ar:'حملة المهيدب لطب الأسنان', en:'Al Muhaidib Dental Campaign', cl_ar:'مجموعة المهيدب', cl_en:'Al Muhaidib Group',
   sar:'حملة ترويجية لمستشفى المهيدب لطب الأسنان تسلّط الضوء على مشكلات الأسنان الشائعة وأهمية العلاج المبكر وتقويم الأسنان.',
   sen:'A promotional campaign for Al Muhaidib Dental Hospital highlighting common dental problems and the importance of early treatment and orthodontic care.'},
+ {slug:'alghad-founding-day', gd:'1wBQ6dHOs44WayFw3yTT5T8AOCWVmc44d', k:'ai', y:2026, d:148, r:'1920/1080',
+  ar:'يوم التأسيس — كليات الغد الدولية', en:'Founding Day — Alghad International Colleges', cl_ar:'كليات الغد الدولية', cl_en:'Alghad International Colleges',
+  sar:'فيديو مُنتج بالذكاء الاصطناعي لكليات الغد الدولية بمناسبة يوم التأسيس، يستعرض منجزات المملكة عبر ملوكها، ويعكس ماضيها وحاضرها ومستقبلها.',
+  sen:'An AI-generated video for Alghad International Colleges for Saudi Founding Day, highlighting the Kingdom\'s achievements through its kings and reflecting its past, present and future.'},
  {slug:'wasad', vid:'1239461716', k:'corp', y:2026, d:236, r:'1920/1080',
   ar:'وثائقي وسد الصناعية', en:'Wasad Industrial Documentary', cl_ar:'وسد الصناعية', cl_en:'Wasad Industrial',
   sar:'فيلم ترويجي لشركة وسد الصناعية يستعرض مشاريعها الكبرى في أنحاء المملكة، وقدراتها وخبرتها وأثرها الصناعي.',
@@ -108,7 +112,8 @@ const CATS = [
  {k:'all', ar:'الكل', en:'All'}, {k:'ads', ar:'إعلانات', en:'Commercials'},
  {k:'drama', ar:'دراما', en:'Drama'}, {k:'gfx', ar:'جرافيك', en:'Graphics'},
  {k:'corp', ar:'أفلام مؤسسية', en:'Corporate'},
- {k:'clip', ar:'كليبات', en:'Clips'}, {k:'prog', ar:'برامج', en:'Programs'}
+ {k:'clip', ar:'كليبات', en:'Clips'}, {k:'prog', ar:'برامج', en:'Programs'},
+ {k:'ai', ar:'AI', en:'AI'}
 ];
 PROJECTS.forEach(p=>{
   const c=CATS.find(c=>c.k===p.k); p.car=c.ar; p.cen=c.en;
