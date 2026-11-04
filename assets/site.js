@@ -436,12 +436,13 @@ function runCtaVis(v){
     win(Lb+Lt,T); ['fig','set','rec'].forEach(c=>on(c)); return;
   }
   win(0,0);
+  const SP=.7;   // معامل السرعة: 0.7 = أسرع بـ30%
   const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  const tween=(a,b,ms)=>new Promise(r=>{ const t0=performance.now();
+  const tween=(a,b,ms)=>new Promise(r=>{ const t0=performance.now(); ms*=SP;
     const f=now=>{ const k=Math.min((now-t0)/ms,1), q=ease(k);
       win(a[0]+(b[0]-a[0])*q, a[1]+(b[1]-a[1])*q); k<1?requestAnimationFrame(f):r(); };
     requestAnimationFrame(f); });
-  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const wait=ms=>new Promise(r=>setTimeout(r,ms*SP));
   const play=async()=>{
     on('fig'); await wait(1300);
     await tween([0,0],[0,Lb],1200);                         // الفكرة تُرسم
@@ -482,16 +483,16 @@ function buildCTA(){
         <svg viewBox="0 0 320 200" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <g>
             <path class="d fig" pathLength="1" d="M22 170C80 167 140 172 196 169C240 167 276 171 300 169"/>
-            <path class="d fig" pathLength="1" style="transition-delay:.2s" d="M206 85C211 85 215 89 215 94C215 99 211 103 206 103C200 103 197 99 197 94C197 89 201 85 207 86"/>
-            <path class="d fig" pathLength="1" style="transition-delay:.4s" d="M206 103C204 114 208 126 206 137C203 148 199 158 196 169M206 137C210 147 213 158 217 169"/>
-            <path class="d fig" pathLength="1" style="transition-delay:.55s" d="M193 129C197 123 201 116 206 112C211 108 215 104 219 98"/>
+            <path class="d fig" pathLength="1" style="transition-delay:0.14s" d="M206 85C211 85 215 89 215 94C215 99 211 103 206 103C200 103 197 99 197 94C197 89 201 85 207 86"/>
+            <path class="d fig" pathLength="1" style="transition-delay:0.28s" d="M206 103C204 114 208 126 206 137C203 148 199 158 196 169M206 137C210 147 213 158 217 169"/>
+            <path class="d fig" pathLength="1" style="transition-delay:0.39s" d="M193 129C197 123 201 116 206 112C211 108 215 104 219 98"/>
             <path class="glow" d="M200 73C199 66 190 62 190 51C190 42 197 36 206 36C215 36 222 43 222 52C222 62 213 66 212 73Z"/>
             <path class="d ray" pathLength="1" d="M206 27V20M225 33L230 28M187 33L182 28M232 51H239M180 51H173"/>
             <path class="line" d="${CTA_LINE.bulb}${CTA_LINE.thread}${CTA_LINE.cam}"/>
             <path class="d set acc" pathLength="1" d="M70 129C66 144 60 157 54 169M70 129C74 144 80 157 86 169"/>
-            <path class="d set" pathLength="1" style="transition-delay:.2s" d="M266 170C272 168 280 168 287 170M276 169C275 145 278 120 276 97C268 98 263 97 261 96C264 89 266 82 268 76C273 75 279 75 284 76C286 83 288 90 290 96C286 97 281 97 276 97"/>
-            <path class="d set dim" pathLength="1" style="transition-delay:.3s" d="M262 99C254 108 244 118 234 129"/>
-            <path class="d set acc" pathLength="1" style="transition-delay:.45s" d="M168 51C168 47 168 43 169 40C172 40 176 40 180 40M234 40C238 40 242 40 246 41C246 44 246 47 246 51M246 158C246 162 246 166 245 169C242 170 238 170 234 170M180 170C176 170 172 170 169 169C168 166 168 162 168 158"/>
+            <path class="d set" pathLength="1" style="transition-delay:0.14s" d="M266 170C272 168 280 168 287 170M276 169C275 145 278 120 276 97C268 98 263 97 261 96C264 89 266 82 268 76C273 75 279 75 284 76C286 83 288 90 290 96C286 97 281 97 276 97"/>
+            <path class="d set dim" pathLength="1" style="transition-delay:0.21s" d="M262 99C254 108 244 118 234 129"/>
+            <path class="d set acc" pathLength="1" style="transition-delay:0.32s" d="M168 51C168 47 168 43 169 40C172 40 176 40 180 40M234 40C238 40 242 40 246 41C246 44 246 47 246 51M246 158C246 162 246 166 245 169C242 170 238 170 234 170M180 170C176 170 172 170 169 169C168 166 168 162 168 158"/>
             <path class="d rec acc dim" pathLength="1" d="M107 99C126 82 146 64 166 48M107 127C126 140 146 152 166 164"/>
           </g>
           <circle class="dot" cx="24" cy="22" r="4.5"/>
