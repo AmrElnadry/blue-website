@@ -466,9 +466,9 @@ function buildCTA(){
           <span data-ar="لديك فكرة؟" data-en="GOT AN IDEA?">لديك فكرة؟</span>
           <span class="two" data-ar="فلنحوّلها إلى واقع." data-en="LET'S MAKE IT REAL.">فلنحوّلها إلى واقع.</span>
         </h2>
-        <p data-ar="أخبرنا عن مشروعك، وسنعود إليك بخطة متكاملة وعرض سعر خلال 48 ساعة."
-           data-en="Tell us about your project and we will come back with a full plan and a quote within 48 hours.">
-          أخبرنا عن مشروعك، وسنعود إليك بخطة متكاملة وعرض سعر خلال 48 ساعة.</p>
+        <p data-ar="تواصل معنا وشاركنا تفاصيل مشروعك، لنقدّم لك العرض الأنسب لفكرتك وأهدافك."
+           data-en="Get in touch and share the details of your project, and we'll put together the offer that best fits your idea and goals.">
+          تواصل معنا وشاركنا تفاصيل مشروعك، لنقدّم لك العرض الأنسب لفكرتك وأهدافك.</p>
         <div class="cta-acts">
           <a class="btn fill lg" href="contact.html">
             <span data-ar="أرسل رسالة" data-en="Send a message">أرسل رسالة</span>
