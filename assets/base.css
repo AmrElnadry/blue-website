@@ -848,3 +848,10 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
 @keyframes recBlink{50%{opacity:.15}}
 @media(max-width:900px){.cta-in{grid-template-columns:1fr}.cta-vis{max-width:560px}}
 @media(prefers-reduced-motion:reduce){.cta-vis .d{transition:none}.cta-vis .dot,.cta-vis .ray{animation:none!important}}
+
+/* الفوتر: الشعار وعمود البريد ينزلان سطراً واحداً فيقع البريد على خط الرقم الثاني.
+   فقط حين تكون الأعمدة في صف واحد */
+@media(min-width:1100px){
+  .flogo img{position:relative;top:calc(17px * 1.95)}
+  .fgrid > .fcol:first-child{padding-top:calc(17px * 1.95)}
+}
