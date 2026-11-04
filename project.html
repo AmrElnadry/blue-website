@@ -18,7 +18,7 @@
 .facts dd{font-size:15.5px}
 /* الفيديو الرأسي (ريلز) يتوسّط بعرض يناسب الشاشة */
 .pvideo.tall{width:min(100%,calc(82svh * var(--r)));margin-inline:auto}
-.nextp{border-top:1px solid var(--line);padding-block:clamp(50px,7vw,80px)}
+.nextp{border-top:1px solid var(--line);padding-block:var(--sec)}
 .nextp a{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .nextp .t{font-family:var(--en);font-weight:900;font-size:clamp(1.8rem,5vw,3.6rem);text-transform:uppercase;
   letter-spacing:-.03em;transition:color .35s}
@@ -33,7 +33,7 @@ html[lang="ar"] .nextp .t{font-family:var(--ar);font-weight:700;text-transform:n
   <div class="pvideo" id="pv"></div>
 </section>
 
-<section style="padding-block:clamp(40px,6vw,70px)"><div class="wrap">
+<section style="padding-block:var(--sec)"><div class="wrap">
   <div class="crumbs rev"><a href="index.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a><span>/</span>
     <a href="portfolio.html" data-ar="الأعمال" data-en="Work">الأعمال</a><span>/</span>
     <em style="font-style:normal" id="pcrumb"></em></div>
@@ -41,7 +41,7 @@ html[lang="ar"] .nextp .t{font-family:var(--ar);font-weight:700;text-transform:n
   <p class="lead rev" id="psum" style="margin-top:20px;max-width:62ch"></p>
 </div></section>
 
-<section style="padding-bottom:clamp(50px,7vw,80px)"><div class="wrap">
+<section style="padding-bottom:var(--sec)"><div class="wrap">
   <dl class="facts rev" id="pfacts"></dl>
 </div></section>
 
