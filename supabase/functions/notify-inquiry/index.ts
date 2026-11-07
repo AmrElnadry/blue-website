@@ -18,29 +18,45 @@ const esc = (s: unknown) =>
 
 function render(r: Inquiry) {
   const when = r.created_at
-    ? new Date(r.created_at).toLocaleString("ar-SA-u-nu-latn", { timeZone: "Asia/Riyadh", dateStyle: "medium", timeStyle: "short" })
+    ? new Date(r.created_at).toLocaleString("ar-SA-u-nu-latn-ca-gregory", { timeZone: "Asia/Riyadh", dateStyle: "long", timeStyle: "short" })
     : "";
+  // نفس خط الموقع (Tajawal). Apple Mail و iOS يحمّلانه؛ Gmail وOutlook يتجاهلان الخطوط الخارجية فيظهر البديل.
+  const FONT = "'Tajawal','IBM Plex Sans Arabic','Segoe UI',Tahoma,Arial,sans-serif";
+  // البريد والجوال إنجليزيان: نعزلهما باتجاه LTR حتى لا ينقلب ترتيب الرموز داخل السطر العربي.
+  const ltr = (s: string) => `<span dir="ltr" style="unicode-bidi:isolate;direction:ltr">${s}</span>`;
   const rows: [string, string][] = [
     ["الاسم", esc(r.name)],
     ["الجهة / الشركة", esc(r.company) || "—"],
-    ["البريد", r.email ? `<a href="mailto:${esc(r.email)}" dir="ltr">${esc(r.email)}</a>` : "—"],
-    ["الجوال", r.phone ? `<a href="tel:${esc(r.phone)}" dir="ltr">${esc(r.phone)}</a>` : "—"],
+    ["البريد", r.email ? ltr(`<a href="mailto:${esc(r.email)}" style="color:#2f8fe0;text-decoration:none">${esc(r.email)}</a>`) : "—"],
+    ["الجوال", r.phone ? ltr(`<a href="tel:${esc(r.phone)}" style="color:#2f8fe0;text-decoration:none">${esc(r.phone)}</a>`) : "—"],
     ["الخدمة", esc(r.service) || "—"],
     ["الميزانية", esc(r.budget) || "—"],
   ];
+  const td = `font-family:${FONT};font-size:15px;line-height:1.7;padding:9px 0;border-bottom:1px solid #eeeef0;text-align:right;vertical-align:top`;
   const table = rows.map(([k, v]) =>
-    `<tr><td style="padding:8px 0;color:#777;width:120px;vertical-align:top">${k}</td><td style="padding:8px 0;color:#111">${v}</td></tr>`
+    `<tr><td dir="rtl" align="right" width="130" style="${td};color:#777;width:130px">${k}</td><td dir="rtl" align="right" style="${td};color:#111">${v}</td></tr>`
   ).join("");
-  const html = `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;font-size:15px;line-height:1.8;max-width:600px">
-  <h2 style="margin:0 0 4px;font-size:20px">طلب جديد من الموقع</h2>
-  <p style="margin:0 0 18px;color:#777;font-size:13px">${esc(when)}</p>
-  <table style="border-collapse:collapse;width:100%">${table}</table>
-  <h3 style="margin:22px 0 8px;font-size:15px">تفاصيل المشروع</h3>
-  <div style="white-space:pre-wrap;background:#f5f5f7;border-radius:8px;padding:14px">${esc(r.message)}</div>
-  <p style="margin-top:22px;color:#777;font-size:13px">للرد على العميل: اضغط «رد» مباشرة. الرسالة محفوظة أيضاً في لوحة التحكم ← الرسائل.</p>
-</div>`;
-  const text = rows.map(([k]) => k).map((k, i) => `${k}: ${[r.name, r.company, r.email, r.phone, r.service, r.budget][i] ?? "—"}`)
-    .join("\n") + `\n\nتفاصيل المشروع:\n${r.message ?? ""}`;
+  const html = `<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>body,table,td,div,p,h1,h2{font-family:${FONT}!important}</style></head>
+<body dir="rtl" style="margin:0;padding:0;background:#f5f5f7;direction:rtl;text-align:right">
+<table role="presentation" dir="rtl" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f7;direction:rtl"><tr><td align="center" style="padding:28px 14px">
+<table role="presentation" dir="rtl" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:14px;direction:rtl"><tr><td dir="rtl" align="right" style="padding:30px 28px;text-align:right;direction:rtl;font-family:${FONT};color:#111">
+  <h1 dir="rtl" style="margin:0 0 4px;font-family:${FONT};font-size:22px;font-weight:700;text-align:right">طلب جديد من الموقع</h1>
+  <p dir="rtl" style="margin:0 0 20px;font-family:${FONT};color:#777;font-size:13px;text-align:right">${esc(when)}</p>
+  <table role="presentation" dir="rtl" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;direction:rtl">${table}</table>
+  <h2 dir="rtl" style="margin:24px 0 8px;font-family:${FONT};font-size:16px;font-weight:700;text-align:right">تفاصيل المشروع</h2>
+  <div dir="auto" style="white-space:pre-wrap;background:#f5f5f7;border-radius:10px;padding:14px 16px;font-family:${FONT};font-size:15px;line-height:1.8;text-align:start">${esc(r.message)}</div>
+  <p dir="rtl" style="margin:24px 0 0;font-family:${FONT};color:#777;font-size:13px;line-height:1.7;text-align:right">للرد على العميل اضغط «رد» مباشرة، والرسالة محفوظة أيضاً في لوحة التحكم ← الرسائل</p>
+</td></tr></table>
+</td></tr></table>
+</body></html>`;
+  // نسخة النص العادي: علامة RLM في بداية كل سطر تجعل البرامج تعرضه من اليمين لليسار.
+  const RLM = "‏";
+  const vals = [r.name, r.company, r.email, r.phone, r.service, r.budget];
+  const text = rows.map(([k], i) => `${RLM}${k}: ${vals[i] || "—"}`).join("\n") +
+    `\n\n${RLM}تفاصيل المشروع:\n${(r.message ?? "").split("\n").map((l) => RLM + l).join("\n")}`;
   return { html, text };
 }
 
