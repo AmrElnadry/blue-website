@@ -6,11 +6,30 @@
 <title>أعمالنا — Blue</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Almarai:wght@300;400;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/base.css">
 <style>
 .pvideo{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
 .pvideo iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pvideo .poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:#000;cursor:none;display:block}
+.pvideo .poster img{width:100%;height:100%;object-fit:cover;opacity:.82;transition:opacity .5s var(--ease),transform 1.2s var(--ease)}
+.pvideo .poster:hover img{opacity:1;transform:scale(1.015)}
+.pvideo .poster .pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(64px,8vw,92px);aspect-ratio:1;
+  border-radius:50%;background:rgba(6,6,7,.55);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px);
+  display:grid;place-items:center;transition:background .35s,border-color .35s}
+.pvideo .poster:hover .pl,.pvideo .poster:focus-visible .pl{background:var(--accent);border-color:var(--accent)}
+.pvideo .poster:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px}
+.pcase{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(24px,3vw,44px);margin-bottom:clamp(34px,4vw,54px)}
+.pcase h2{font-size:12px;letter-spacing:.06em;color:var(--accent2);font-weight:600;margin-bottom:12px}
+html[lang="en"] .pcase h2{letter-spacing:.16em;text-transform:uppercase}
+.pcase p{color:#c6c6cc;line-height:2}
+.pcase ul{list-style:none;display:grid;gap:8px;color:#c6c6cc}
+.pcase li b{color:var(--fg);font-weight:600;margin-inline-end:8px}
+.pask{display:flex;align-items:center;justify-content:space-between;gap:20px 32px;flex-wrap:wrap;
+  background:#101014;border:1px solid rgba(255,255,255,.06);border-radius:clamp(18px,2vw,26px);
+  padding:clamp(24px,3vw,40px);margin-top:clamp(28px,3.4vw,44px)}
+.pask h2{font-size:clamp(1.3rem,2.4vw,1.9rem);margin-bottom:6px}
+.pask p{color:var(--dim);line-height:1.9}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
   border:1px solid var(--line)}
 .facts div{background:var(--bg);padding:24px 22px}
@@ -42,7 +61,17 @@ html[lang="ar"] .nextp .t{font-family:var(--ar);font-weight:700;text-transform:n
 </div></section>
 
 <section style="padding-bottom:var(--sec)"><div class="wrap">
+  <div class="pcase rev" id="pcase" hidden></div>
   <dl class="facts rev" id="pfacts"></dl>
+  <div class="pask rev">
+    <div>
+      <h2 data-ar="لديك مشروع مشابه؟" data-en="Have a similar project?">لديك مشروع مشابه؟</h2>
+      <p data-ar="أخبرنا بفكرتك، ونعود إليك بموجز مكتوب وعرض سعر قبل أي التزام."
+         data-en="Tell us your idea and we'll come back with a written brief and a quote before any commitment.">أخبرنا بفكرتك، ونعود إليك بموجز مكتوب وعرض سعر قبل أي التزام.</p>
+    </div>
+    <a class="btn fill lg" id="pask" href="contact.html"><span data-ar="ابدأ مشروعك" data-en="Start your project">ابدأ مشروعك</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+  </div>
 </div></section>
 
 <!-- أعمال قريبة -->
@@ -75,8 +104,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   const [w,h]=p.r.split('/').map(Number);
   const pv=document.getElementById('pv');
   pv.style.aspectRatio=p.r; pv.style.setProperty('--r',w/h); pv.classList.toggle('tall',h>w);
-  pv.innerHTML=`<iframe src="${p.gd?`https://drive.google.com/file/d/${p.gd}/preview`:`https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0`}"
-    allow="fullscreen;picture-in-picture" allowfullscreen title="${p.en}"></iframe>`;
+  /* صورة الغلاف أولاً، والمشغّل يُحمَّل عند الضغط: لا مربع أسود ولا تحميل قبل الحاجة */
+  const src=p.gd?`https://drive.google.com/file/d/${p.gd}/preview`
+    :`https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0&autoplay=1`;
+  pv.innerHTML=`<button class="poster" type="button" aria-label="تشغيل الفيديو: ${p.ar}">
+    <img src="${p.img}" alt="" fetchpriority="high">
+    <span class="pl"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span></button>`;
+  pv.querySelector('.poster').addEventListener('click',()=>{
+    pv.innerHTML=`<iframe src="${src}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="${p.en}"></iframe>`;
+  },{once:true});
 
   document.title=`${p.ar} — Blue`;
   t(document.getElementById('pcrumb'),p.ar,p.en);
@@ -93,6 +129,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   ].filter(Boolean);
   document.getElementById('pfacts').innerHTML=facts.map(([ar,en,dd])=>
     `<div><dt data-ar="${ar}" data-en="${en}">${ar}</dt>${dd}</div>`).join('');
+
+  /* تفاصيل دراسة الحالة تظهر فقط إذا أُضيفت للمشروع: brief_ar/en، did_ar/en، credits:[{ar,en,name}] */
+  const isAr=()=>document.documentElement.lang!=='en';
+  const blocks=[
+    p.brief_ar && `<div><h2 data-ar="المهمة" data-en="The brief">المهمة</h2><p data-ar="${p.brief_ar}" data-en="${p.brief_en||p.brief_ar}">${p.brief_ar}</p></div>`,
+    p.did_ar && `<div><h2 data-ar="ما قدّمناه" data-en="What we did">ما قدّمناه</h2><p data-ar="${p.did_ar}" data-en="${p.did_en||p.did_ar}">${p.did_ar}</p></div>`,
+    p.credits && p.credits.length && `<div><h2 data-ar="فريق العمل" data-en="Credits">فريق العمل</h2><ul>${
+      p.credits.map(c=>`<li><b data-ar="${c.ar}" data-en="${c.en||c.ar}">${c.ar}</b>${c.name}</li>`).join('')}</ul></div>`
+  ].filter(Boolean);
+  if(blocks.length){ const pc=document.getElementById('pcase'); pc.innerHTML=blocks.join(''); pc.hidden=false; }
+
+  /* زر «ابدأ مشروعك» يفتح النموذج بالخدمة الأقرب واسم المشروع */
+  const K2S={ads:'commercials',drama:'film',corp:'film',clip:'film',gfx:'motion',ai:'motion',prog:'prog'};
+  document.getElementById('pask').href=`contact.html?s=${K2S[p.k]||''}&w=${p.slug}`;
 
   const others=PROJECTS.filter(q=>q!==p);
   const rel=[...others.filter(q=>q.k===p.k),...others.filter(q=>q.k!==p.k)].slice(0,3);

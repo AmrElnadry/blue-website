@@ -9,3 +9,6 @@ wrangler.jsonc
 .assetsignore
 index-v2.html
 CNAME
+.impeccable
+PRODUCT.md
+DESIGN.md

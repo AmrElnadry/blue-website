@@ -6,7 +6,7 @@
 <title>تواصل معنا — Blue</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Almarai:wght@300;400;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/base.css">
 </head>
 <body data-page="contact.html">
@@ -85,27 +85,21 @@
     <div class="ccard rev">
       <form id="f1">
         <div class="two">
-          <label class="field"><span data-ar="الاسم *" data-en="Name *">الاسم *</span><input required></label>
-          <label class="field"><span data-ar="الجهة / الشركة" data-en="Company">الجهة / الشركة</span><input></label>
+          <label class="field"><span data-ar="الاسم *" data-en="Name *">الاسم *</span><input name="name" autocomplete="name" maxlength="120" required></label>
+          <label class="field"><span data-ar="الجهة / الشركة" data-en="Company">الجهة / الشركة</span><input name="company" autocomplete="organization" maxlength="160"></label>
         </div>
         <div class="two">
           <label class="field"><span data-ar="البريد الإلكتروني *" data-en="Email *">البريد الإلكتروني *</span>
-            <input type="email" dir="ltr" required></label>
+            <input name="email" type="email" dir="ltr" autocomplete="email" maxlength="160" required></label>
           <label class="field"><span data-ar="رقم الجوال" data-en="Phone">رقم الجوال</span>
-            <input type="tel" dir="ltr"></label>
+            <input name="phone" type="tel" dir="ltr" autocomplete="tel" maxlength="40"></label>
         </div>
         <div class="two">
           <label class="field"><span data-ar="الخدمة المطلوبة" data-en="Service needed">الخدمة المطلوبة</span>
-            <select>
-              <option data-ar="إعلان تجاري" data-en="Commercial">إعلان تجاري</option>
-              <option data-ar="فيديو تعريفي" data-en="Explainer video">فيديو تعريفي</option>
-              <option data-ar="موشن جرافيك" data-en="Motion graphics">موشن جرافيك</option>
-              <option data-ar="دراما أو فيلم" data-en="Drama or film">دراما أو فيلم</option>
-              <option data-ar="تصوير فوتوغرافي" data-en="Photography">تصوير فوتوغرافي</option>
-              <option data-ar="هوية بصرية" data-en="Brand identity">هوية بصرية</option>
-            </select></label>
+            <select name="service" id="fsvc"></select></label>
           <label class="field"><span data-ar="الميزانية التقديرية" data-en="Budget">الميزانية التقديرية</span>
-            <select>
+            <select name="budget">
+              <option value="" disabled selected data-ar="اختر النطاق…" data-en="Choose a range…">اختر النطاق…</option>
               <option data-ar="أقل من 15 ألف ريال" data-en="Under 15k SAR">أقل من 15 ألف ريال</option>
               <option data-ar="15 — 50 ألف ريال" data-en="15k — 50k SAR">15 — 50 ألف ريال</option>
               <option data-ar="50 — 150 ألف ريال" data-en="50k — 150k SAR">50 — 150 ألف ريال</option>
@@ -114,19 +108,30 @@
             </select></label>
         </div>
         <label class="field"><span data-ar="تفاصيل المشروع *" data-en="Project details *">تفاصيل المشروع *</span>
-          <textarea required></textarea></label>
+          <textarea name="message" id="fmsg" maxlength="4000" required></textarea></label>
         <div class="cbtns">
-          <button class="btn fill lg" type="submit"><span data-ar="إرسال الطلب" data-en="Send request">إرسال الطلب</span>
+          <button class="btn fill lg" type="submit" id="fsend"><span data-ar="إرسال الطلب" data-en="Send request">إرسال الطلب</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
-          <a class="btn lg wa" href="https://wa.me/966567561619" target="_blank" rel="noopener">
+          <a class="btn lg wa" id="fwa" href="https://wa.me/966567561619" target="_blank" rel="noopener">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Zm5.6 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1 0-1.5.8-2.2 1-2.5.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.2.4 0 .7l-.4.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l.9-1c.2-.3.4-.2.7-.1l2.1 1c.3.1.5.2.6.3.1.2.1.8-.1 1.5Z"/></svg>
             <span data-ar="تواصل عبر واتساب" data-en="Chat on WhatsApp">تواصل عبر واتساب</span></a>
         </div>
+        <p class="ferr" id="ferr" role="alert" hidden
+          data-ar="تعذّر إرسال الطلب الآن. جرّب مرة أخرى، أو أرسل نفس التفاصيل عبر واتساب بضغطة على الزر الأخضر."
+          data-en="We couldn't send your request just now. Try again, or send the same details on WhatsApp with the green button.">تعذّر إرسال الطلب الآن. جرّب مرة أخرى، أو أرسل نفس التفاصيل عبر واتساب بضغطة على الزر الأخضر.</p>
+        <ol class="fnext">
+          <li data-ar="نراجع طلبك ونتواصل معك لجلسة نفهم فيها الفكرة والهدف."
+            data-en="We review your request and set up a session to understand the idea and goal.">نراجع طلبك ونتواصل معك لجلسة نفهم فيها الفكرة والهدف.</li>
+          <li data-ar="نرسل لك موجزاً إبداعياً مكتوباً وعرض سعر مفصّلاً."
+            data-en="We send you a written creative brief and a detailed quote.">نرسل لك موجزاً إبداعياً مكتوباً وعرض سعر مفصّلاً.</li>
+          <li data-ar="لا التزام قبل أن توافق على الموجز والعرض."
+            data-en="No commitment until you approve the brief and the quote.">لا التزام قبل أن توافق على الموجز والعرض.</li>
+        </ol>
       </form>
       <div class="okmsg" id="ok1">
         <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
-        <h3 style="font-size:1.3rem;margin-bottom:10px" data-ar="وصلتنا رسالتك" data-en="Message received">وصلتنا رسالتك</h3>
-        <p class="muted" data-ar="شكراً لتواصلك." data-en="Thank you for reaching out.">شكراً لتواصلك.</p>
+        <h2 style="font-size:1.3rem;margin-bottom:10px" data-ar="وصلتنا رسالتك" data-en="Message received">وصلتنا رسالتك</h2>
+        <p class="muted" data-ar="شكراً لتواصلك. سنعود إليك قريباً على البريد أو الجوال الذي كتبته." data-en="Thank you for reaching out. We'll get back to you on the email or phone you gave us.">شكراً لتواصلك. سنعود إليك قريباً على البريد أو الجوال الذي كتبته.</p>
       </div>
     </div>
 
@@ -154,9 +159,47 @@
 })();
 
 document.addEventListener('DOMContentLoaded',()=>{
-  const form=document.getElementById('f1');
-  form.addEventListener('submit',e=>{e.preventDefault();form.style.display='none';
-    document.getElementById('ok1').classList.add('show');});
+  const form=document.getElementById('f1'), ar=()=>document.documentElement.lang!=='en';
+  const svc=document.getElementById('fsvc'), msg=document.getElementById('fmsg');
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const opt=(v,a,e)=>`<option value="${esc(v)}" data-ar="${esc(a)}" data-en="${esc(e)}">${esc(a)}</option>`;
+  /* نفس قائمة الخدمات في الموقع، مجمّعة بالمراحل */
+  svc.innerHTML=`<option value="" disabled selected data-ar="اختر الخدمة…" data-en="Choose a service…">اختر الخدمة…</option>`+
+    PHASES.map(p=>`<optgroup label="">${p.items.map(i=>opt(i.ar,i.ar,i.en)).join('')}`+
+      (p.en==='Production'?opt('برامج ومسلسلات','برامج ومسلسلات','Programmes & series'):'')+`</optgroup>`).join('')+
+    opt('غير متأكد بعد','غير متأكد بعد','Not sure yet');
+  /* قادم من صفحة مشروع: نحدد الخدمة ونذكر المشروع في التفاصيل */
+  const q=new URLSearchParams(location.search);
+  const bySlug=Object.fromEntries(SERVICES.map(x=>[x.slug,x.ar]));
+  const pre=bySlug[q.get('s')]||(q.get('s')==='prog'?'برامج ومسلسلات':'');
+  if(pre) svc.value=pre;
+  const ref=PROJECTS.find(p=>p.slug===q.get('w'));
+  if(ref&&!msg.value) msg.value=(ar()?`أرغب في مشروع مشابه لـ «${ref.ar}». `:`I'd like a project similar to "${ref.en}". `);
+  window.applyLang&&window.applyLang();
+  const glabels=()=>svc.querySelectorAll('optgroup').forEach((g,i)=>g.label=ar()?PHASES[i].ar:PHASES[i].en);
+  glabels(); document.getElementById('lang')?.addEventListener('click',()=>setTimeout(glabels,0));
+  /* زر واتساب يحمل ما كُتب في النموذج */
+  const wa=document.getElementById('fwa');
+  const waText=()=>{const d=new FormData(form);
+    return [d.get('name'),d.get('company'),d.get('service'),d.get('budget'),d.get('message')].filter(Boolean).join('\n');};
+  wa.addEventListener('click',()=>{const t=waText(); wa.href='https://wa.me/966567561619'+(t?'?text='+encodeURIComponent(t):'');});
+  const btn=document.getElementById('fsend'), err=document.getElementById('ferr');
+  form.addEventListener('submit',async e=>{
+    e.preventDefault(); err.hidden=true;
+    const d=Object.fromEntries(new FormData(form));
+    const row={name:d.name.trim(),email:d.email.trim(),phone:(d.phone||'').trim()||null,company:(d.company||'').trim()||null,
+      service:d.service||null,budget:d.budget||null,message:d.message.trim()};
+    btn.disabled=true; btn.classList.add('busy');
+    try{
+      const r=await fetch(`${window.SB_URL}/rest/v1/inquiries`,{method:'POST',
+        headers:{apikey:window.SB_KEY,Authorization:'Bearer '+window.SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},
+        body:JSON.stringify(row)});
+      if(!r.ok) throw new Error(r.status);
+      form.style.display='none';
+      document.getElementById('ok1').classList.add('show');
+    }catch(x){ err.hidden=false; }
+    finally{ btn.disabled=false; btn.classList.remove('busy'); }
+  });
 });
 </script>
 </body>

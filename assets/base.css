@@ -8,13 +8,11 @@
   --accent:#2f8fe0; --accent2:#7bd4ff;
   --en:'Archivo',system-ui,sans-serif;
   --ar:'IBM Plex Sans Arabic',system-ui,sans-serif;
-  --nav:'IBM Plex Sans Arabic',system-ui,sans-serif;
+  --nav:'Tajawal','IBM Plex Sans Arabic',system-ui,sans-serif;
   --ease:cubic-bezier(.19,1,.22,1);
   --pad:40px;
   /* نسبة أبعاد فيديو الهيرو: 1 مربّع · 1.7778 عريض 16:9 */
 }
-html[data-navfont='almarai']{--nav:'Almarai',system-ui,sans-serif}
-html[data-navfont='tajawal']{--nav:'Tajawal',system-ui,sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--fg);font-family:var(--ar);overflow-x:hidden;width:100%;cursor:none}
@@ -55,7 +53,7 @@ header.site.solid{background:rgba(6,6,7,.86);backdrop-filter:blur(18px);border-b
 header.site.stuck .mark img{height:30px}
 .mark:hover img{opacity:.75}
 header.site .mainnav{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  display:flex;gap:30px;align-items:center;font-family:var(--nav);font-size:14.5px;white-space:nowrap}
+  display:flex;gap:30px;align-items:center;font-family:var(--nav);font-size:15px;font-weight:500;white-space:nowrap}
 header.site .hactions{display:flex;gap:14px;align-items:center;flex-shrink:0}
 header.site .lnk{opacity:.78;transition:opacity .3s;position:relative;padding-bottom:4px}
 header.site .lnk:hover{opacity:1}
@@ -306,7 +304,7 @@ html[lang="ar"] .fcol b{letter-spacing:0;font-size:12px}
 .field{display:block;margin-bottom:20px}
 .field span{display:block;font-size:13px;color:#c2c2c8;margin-bottom:9px}
 .field input,.field textarea,.field select{width:100%;background:var(--card);border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;padding:14px 16px;color:var(--fg);font-family:inherit;font-size:15px;transition:.3s;
+  border-radius:10px;padding:14px 16px;color:var(--fg);font-family:inherit;font-size:16px;transition:.3s;
   cursor:none}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);
   background:var(--card2)}
@@ -414,12 +412,6 @@ html[dir="rtl"] .vm-s em{background-position:right bottom}
 .post p{font-size:13.5px;color:var(--dim);line-height:1.9;flex:1}
 .post .link-line{margin-top:18px;font-size:12px}
 
-/* ═══ تنبيه النموذج ═══ */
-.mockbar{position:fixed;bottom:0;inset-inline:0;z-index:150;background:rgba(47,143,224,.95);color:#fff;
-  font-size:12.5px;padding:9px var(--pad);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  backdrop-filter:blur(8px)}
-.mockbar a{text-decoration:underline;opacity:.9}
-body{padding-bottom:38px}
 
 @media(prefers-reduced-motion:reduce){
   .marq::after{display:none}.mtrack{animation:none}.grain{display:none}
@@ -529,12 +521,7 @@ html[lang="en"] .offrow:hover .city{transform:translateX(10px)}
 }
 
 /* ── شريط النموذج ── */
-.mockbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.mockbar .mb-fonts{display:flex;align-items:center;gap:7px;font-size:12px}
-.mockbar .mb-fonts button{background:rgba(255,255,255,.22);border:0;color:#fff;width:24px;height:22px;
   border-radius:6px;font-size:12px;font-weight:700}
-.mockbar .mb-fonts button.on{background:#fff;color:var(--accent)}
-.mockbar .mb-links{margin-inline-start:auto}
 
 /* ── أيقونة الفكرة: حركة الرسم ── */
 .idea{width:clamp(96px,11vw,150px);height:auto;flex-shrink:0;color:var(--accent2);overflow:visible}
@@ -797,6 +784,15 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
 .ccard .field textarea{min-height:150px}
 .cbtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
 .btn.wa svg{flex:none}
+.btn.busy{opacity:.6;pointer-events:none}
+.ferr{margin-top:16px;padding:12px 14px;border-radius:12px;background:rgba(224,72,72,.1);
+  border:1px solid rgba(224,72,72,.35);color:#f3c4c4;font-size:14px;line-height:1.8}
+.ferr[hidden]{display:none}
+.fnext{list-style:none;counter-reset:fn;margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,.07);
+  display:grid;gap:10px}
+.fnext li{counter-increment:fn;display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;
+  font-size:13.5px;line-height:1.8;color:#b4b4bb}
+.fnext li::before{content:counter(fn);font-family:var(--en);font-weight:700;font-size:12px;color:var(--accent2)}
 .okmsg{display:none;padding:20px 0}
 .okmsg.show{display:block}
 .okmsg .ic{width:56px;height:56px;border-radius:50%;background:#202027;display:grid;
@@ -807,6 +803,7 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
   .cttl{max-width:none}
   .cside{height:auto}
   .cttl.stick{margin-top:0;padding-top:clamp(28px,6vw,40px)}
+  .cgrid .ccard{order:-1}
 }
 @media(max-width:620px){
   .ccard .two{grid-template-columns:1fr}

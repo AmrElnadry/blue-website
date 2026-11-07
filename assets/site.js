@@ -508,25 +508,85 @@ function buildCTA(){
   </div></section>`;
 }
 
+/* ── المقالات: قائمة واحدة لكل الصفحات. النص الكامل في جدول posts بـ Supabase،
+   ما عدا دليل الأسعار المكتوب داخل article.html ── */
+const BLOG_CATS = [
+ {k:'all',ar:'الكل',en:'All'},{k:'tips',ar:'نصائح الإنتاج',en:'Production Tips'},
+ {k:'mkt',ar:'التسويق بالفيديو',en:'Video Marketing'},{k:'motion',ar:'موشن وأنيميشن',en:'Motion'}
+];
+const ARTICLES = [
+ {slug:'production-cost', k:'mkt', r:9, dar:'12 أكتوبر 2026', den:'Oct 12, 2026', img:'assets/blog/production-cost.webp', local:true,
+  ar:'كم تكلفة إنتاج فيديو إعلاني في السعودية؟ دليل الأسعار 2026',
+  en:'How much does a commercial video cost in Saudi Arabia? 2026 pricing guide',
+  exar:'تفصيل واقعي لبنود التكلفة — من أجور الفريق والمعدّات إلى المواقع وما بعد الإنتاج — مع نطاقات أسعار لثلاثة مستويات من الإنتاج.',
+  exen:'A realistic breakdown of cost items — crew, equipment, locations and post — with price ranges across three production tiers.'},
+ {slug:'choosing-production-company', k:'tips', r:7, dar:'12 أكتوبر 2026', den:'Oct 12, 2026', img:'assets/blog/choose-company.webp',
+  ar:'كيف تختار شركة إنتاج فيديو لمشروعك؟', en:'How to choose a video production company',
+  exar:'خمسة معايير عملية تساعدك على تقييم أي شركة إنتاج قبل التوقيع، من الشوريل إلى طريقة إدارة الميزانية.',
+  exen:'Five practical criteria to evaluate any production house before you sign.'},
+ {slug:'motion-vs-filming', k:'motion', r:6, dar:'2 سبتمبر 2026', den:'Sep 2, 2026', img:'assets/blog/motion-vs-film.webp',
+  ar:'متى تختار الموشن جرافيك بدل التصوير؟', en:'When to choose motion graphics over filming',
+  exar:'ثلاث حالات يكون فيها الأنيميشن أسرع وأرخص وأوضح من التصوير الحقيقي.',
+  exen:'Three cases where animation is faster, cheaper and clearer than live action.'},
+ {slug:'creative-brief-essentials', k:'tips', r:8, dar:'20 أغسطس 2026', den:'Aug 20, 2026', img:'assets/blog/creative-brief.webp',
+  ar:'ما الذي يجب أن يحتويه موجز المشروع الإبداعي؟', en:'What a creative brief must contain',
+  exar:'نموذج موجز جاهز يختصر أسابيع من المراجعات ويضمن أن يصل العمل لما تتخيّله.',
+  exen:'A ready brief template that saves weeks of revisions.'},
+ {slug:'aspect-ratios-2026', k:'mkt', r:5, dar:'5 أغسطس 2026', den:'Aug 5, 2026', img:'assets/blog/aspect-ratios.webp',
+  ar:'مقاسات الفيديو لكل منصة في 2026', en:'Video aspect ratios for every platform in 2026',
+  exar:'جدول مرجعي سريع بالمقاسات والمدد المثالية لكل منصة.',
+  exen:'A quick reference table of ratios and ideal durations per platform.'}
+];
+ARTICLES.forEach(a=>{ const c=BLOG_CATS.find(c=>c.k===a.k); a.car=c.ar; a.cen=c.en; a.url=`article.html?a=${a.slug}`; });
+
+function postCard(a, more=true){
+  return `<a class="post" href="${a.url}">
+    <span class="ph"><img src="${a.img}" alt="" loading="lazy" decoding="async"></span>
+    <span class="bd">
+      <span class="meta"><span class="c" data-ar="${a.car}" data-en="${a.cen}">${a.car}</span>
+        <span data-ar="${a.dar}" data-en="${a.den}">${a.dar}</span>
+        <span data-ar="${a.r} دقائق قراءة" data-en="${a.r} min read">${a.r} دقائق قراءة</span></span>
+      <h3 data-ar="${a.ar}" data-en="${a.en}">${a.ar}</h3>
+      <p data-ar="${a.exar}" data-en="${a.exen}">${a.exar}</p>
+      ${more?`<span class="link-line" data-ar="اقرأ المزيد" data-en="Read more">اقرأ المزيد</span>`:''}
+    </span></a>`;
+}
+
+/* تحويل نص المقال (Markdown مبسّط) إلى HTML: عناوين، قوائم، اقتباس، جداول، خط عريض */
+function mdToHtml(md){
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inl=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const out=[], toc=[]; let list=null, tbl=null, para=[];
+  const flushP=()=>{ if(para.length){ out.push(`<p>${inl(para.join(' '))}</p>`); para=[]; } };
+  const flushL=()=>{ if(list){ out.push(`<${list.t}>${list.i.map(x=>`<li>${inl(x)}</li>`).join('')}</${list.t}>`); list=null; } };
+  const flushT=()=>{ if(tbl){ const [h,...rows]=tbl;
+    out.push(`<table class="ptable"><thead><tr>${h.map(c=>`<th>${inl(c)}</th>`).join('')}</tr></thead><tbody>${
+      rows.map(r=>`<tr>${r.map(c=>`<td>${inl(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`); tbl=null; } };
+  const flush=()=>{flushP();flushL();flushT();};
+  md.replace(/\r/g,'').split('\n').forEach(raw=>{
+    const l=raw.trim(); let m;
+    if(!l){ flush(); return; }
+    if(l.startsWith('|')){ flushP(); flushL();
+      if(/^\|[\s|:-]+\|$/.test(l)) return;
+      (tbl=tbl||[]).push(l.slice(1,-1).split('|').map(c=>c.trim())); return; }
+    flushT();
+    if((m=l.match(/^(#{2,3})\s+(.*)/))){ flush(); const lv=m[1].length;
+      if(lv===2){ const id='s'+(toc.length+1); toc.push({id,t:m[2]}); out.push(`<h2 id="${id}">${inl(m[2])}</h2>`); }
+      else out.push(`<h3>${inl(m[2])}</h3>`); return; }
+    if((m=l.match(/^>\s?(.*)/))){ flush(); out.push(`<blockquote>${inl(m[1])}</blockquote>`); return; }
+    if((m=l.match(/^[-*]\s+(.*)/))||(m=l.match(/^\d+[.)]\s+(.*)/))){ flushP();
+      const t=/^\d/.test(l)?'ol':'ul'; if(!list||list.t!==t){ flushL(); list={t,i:[]}; } list.i.push(m[1]); return; }
+    flushL(); para.push(l);
+  });
+  flush();
+  return {html:out.join('\n'), toc};
+}
+
 /* ── شريط شعارات العملاء ── */
 function buildLogos(){
   const row = CLIENTS.map(c=>`<span class="lg">${logoImg(c)}</span>`).join('');
   return `<section class="clients"><div class="cl-track">
     <div class="cl-grp">${row}</div><div class="cl-grp" aria-hidden="true">${row}</div></div></section>`;
-}
-
-function buildMockbar(){
-  return `<div class="mockbar">
-    <span class="mb-fonts">خط القائمة:
-      <button data-nf="plex" class="on">1</button>
-      <button data-nf="almarai">2</button>
-      <button data-nf="tajawal">3</button></span>
-    <span class="mb-links"><a href="index.html">الرئيسية</a> · <a href="about.html">من نحن</a> ·
-      <a href="services.html">الخدمات</a> · <a href="service.html?s=motion">خدمة</a> ·
-      <a href="portfolio.html">الأعمال</a> · <a href="project.html">مشروع</a> ·
-      <a href="blog.html">المدونة</a> · <a href="article.html">مقال</a> ·
-      <a href="contact.html">تواصل</a> · <a href="404.html">404</a></span>
-  </div>`;
 }
 
 function tile(p, size=''){
@@ -569,7 +629,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('[data-slot="cta"]').forEach(s=>s.outerHTML=buildCTA());
   document.querySelectorAll('.cta-vis').forEach(runCtaVis);
   const fSlot=document.getElementById('slot-footer'); if(fSlot) fSlot.outerHTML=buildFooter();
-  document.body.insertAdjacentHTML('beforeend',buildMockbar());
 
   /* المؤشر */
   const cur=document.createElement('div'); cur.className='cur';
@@ -652,14 +711,4 @@ document.addEventListener('DOMContentLoaded',()=>{
   window.applyLang=()=>apply(isAr);
   setTimeout(()=>apply(isAr),0);
 
-  /* مبدّل خط القائمة (للتجربة فقط) */
-  const nfBox=document.querySelector('.mb-fonts');
-  const setNF=v=>{ document.documentElement.dataset.navfont=v;
-    try{localStorage.setItem('bph_navfont',v)}catch(e){}
-    nfBox && nfBox.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.nf===v)); };
-  let nf='plex'; try{ nf=localStorage.getItem('bph_navfont')||'plex'; }catch(e){}
-  setNF(nf);
-  if(nfBox) nfBox.addEventListener('click',e=>{
-    const b=e.target.closest('button'); if(b) setNF(b.dataset.nf);
-  });
 });

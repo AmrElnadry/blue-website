@@ -6,8 +6,10 @@
 <title>كم تكلفة إنتاج فيديو إعلاني في السعودية؟ — Blue</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Almarai:wght@300;400;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/base.css">
+<script>/* مقال من قاعدة البيانات: نخفي نص دليل الأسعار الثابت قبل الرسم */
+(()=>{const s=new URLSearchParams(location.search).get('a');if(s&&s!=='production-cost')document.documentElement.classList.add('dbart');})();</script>
 <style>
 .article{max-width:780px;margin:0 auto;padding-inline:var(--pad)}
 .atitle{font-size:clamp(1.8rem,4.4vw,3rem);line-height:1.45;margin-bottom:22px}
@@ -33,6 +35,9 @@
 .share a{border:1px solid var(--line);border-radius:30px;padding:9px 18px;font-size:12.5px;color:#c2c2c8;
   transition:.3s}
 .share a:hover{border-color:var(--accent);color:var(--accent2)}
+#abody.wait,#atoc.wait,.dbart #abody:not(.ready),.dbart #atoc:not(.ready){opacity:0}
+#abody,#atoc{transition:opacity .4s}
+.anote{color:var(--dim);line-height:2}
 </style>
 </head>
 <body data-page="blog.html">
@@ -42,22 +47,22 @@
   <div class="article">
     <div class="crumbs"><a href="index.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a><span>/</span>
       <a href="blog.html" data-ar="المدونة" data-en="Blog">المدونة</a><span>/</span>
-      <em style="font-style:normal" data-ar="دليل الأسعار" data-en="Pricing guide">دليل الأسعار</em></div>
+      <em style="font-style:normal" id="acrumb" data-ar="دليل الأسعار" data-en="Pricing guide">دليل الأسعار</em></div>
 
-    <p class="eyebrow" data-ar="التسويق بالفيديو" data-en="Video Marketing">التسويق بالفيديو</p>
-    <h1 class="atitle" data-ar="كم تكلفة إنتاج فيديو إعلاني في السعودية؟ دليل الأسعار 2026"
+    <p class="eyebrow" id="atag" data-ar="التسويق بالفيديو" data-en="Video Marketing">التسويق بالفيديو</p>
+    <h1 class="atitle" id="attl" data-ar="كم تكلفة إنتاج فيديو إعلاني في السعودية؟ دليل الأسعار 2026"
         data-en="How much does a commercial video cost in Saudi Arabia? 2026 pricing guide">
       كم تكلفة إنتاج فيديو إعلاني في السعودية؟ دليل الأسعار 2026</h1>
 
     <div class="ameta">
       <span class="au"><span class="av">B</span><span data-ar="Blue" data-en="Blue">Blue</span></span>
-      <span>·</span><span>12 أكتوبر 2026</span>
-      <span>·</span><span data-ar="9 دقائق قراءة" data-en="9 min read">9 دقائق قراءة</span>
+      <span>·</span><span id="adate" data-ar="12 أكتوبر 2026" data-en="Oct 12, 2026">12 أكتوبر 2026</span>
+      <span>·</span><span id="aread" data-ar="9 دقائق قراءة" data-en="9 min read">9 دقائق قراءة</span>
     </div>
 
-    <div class="cover"><img src="assets/blog/production-cost.webp" alt=""></div>
+    <div class="cover"><img id="acover" src="assets/blog/production-cost.webp" alt=""></div>
 
-    <div class="toc">
+    <div class="toc" id="atoc">
       <b data-ar="محتويات المقال" data-en="IN THIS ARTICLE">محتويات المقال</b>
       <ol>
         <li><a href="#a1" data-ar="ما الذي يحدّد السعر فعلاً؟" data-en="What actually sets the price?">ما الذي يحدّد السعر فعلاً؟</a></li>
@@ -67,7 +72,7 @@
       </ol>
     </div>
 
-    <div class="prose" style="max-width:none">
+    <div class="prose" id="abody" style="max-width:none">
       <p data-ar="أكثر سؤال يصلنا قبل أي شيء آخر: «كم سيكلّفني هذا الفيديو؟». والإجابة الصادقة أنها تتراوح بين ثمانية آلاف ريال ومليون — وهذا المدى الواسع نفسه هو سبب كتابة هذا الدليل."
          data-en="The most common question we get: how much will this video cost? The honest answer ranges from eight thousand riyals to a million — and that wide range is exactly why we wrote this guide.">
         أكثر سؤال يصلنا قبل أي شيء آخر: «كم سيكلّفني هذا الفيديو؟». والإجابة الصادقة أنها تتراوح بين ثمانية آلاف ريال ومليون — وهذا المدى الواسع نفسه هو سبب كتابة هذا الدليل.</p>
@@ -129,8 +134,8 @@
 
     <div class="share">
       <span style="font-size:13px;color:var(--dim)" data-ar="مشاركة:" data-en="Share:">مشاركة:</span>
-      <a href="#">WhatsApp</a><a href="#">X</a><a href="#">LinkedIn</a>
-      <a href="#" data-ar="نسخ الرابط" data-en="Copy link">نسخ الرابط</a>
+      <a id="sh-wa" href="#" target="_blank" rel="noopener">WhatsApp</a><a id="sh-x" href="#" target="_blank" rel="noopener">X</a><a id="sh-in" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#" id="sh-cp" data-ar="نسخ الرابط" data-en="Copy link">نسخ الرابط</a>
     </div>
   </div>
 </article>
@@ -143,29 +148,65 @@
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
-  const R=[
-   {ar:'كيف تختار شركة إنتاج فيديو لمشروعك؟',en:'How to choose a production company',car:'نصائح الإنتاج',cen:'Tips',
-    d:'12 أكتوبر 2026',r:'6',exar:'خمسة معايير عملية قبل التوقيع.',exen:'Five practical criteria before signing.',
-    img:'assets/blog/choose-company.webp'},
-   {ar:'متى تختار الموشن جرافيك بدل التصوير؟',en:'Motion graphics or filming?',car:'موشن',cen:'Motion',
-    d:'2 سبتمبر 2026',r:'5',exar:'ثلاث حالات يكون فيها الأنيميشن أفضل.',exen:'Three cases where animation wins.',
-    img:'assets/blog/motion-vs-film.webp'},
-   {ar:'ما الذي يجب أن يحتويه موجز المشروع؟',en:'What a creative brief must contain',car:'نصائح الإنتاج',cen:'Tips',
-    d:'20 أغسطس 2026',r:'7',exar:'نموذج جاهز يختصر أسابيع من المراجعات.',exen:'A template that saves weeks.',
-    img:'assets/blog/creative-brief.webp'}
-  ];
-  document.getElementById('rel').innerHTML=R.map(p=>
-    `<a class="post" href="article.html">
-      <span class="ph"><img src="${p.img}" alt="" loading="lazy" decoding="async"></span>
-      <span class="bd">
-        <span class="meta"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
-          <span>${p.d}</span><span data-ar="${p.r} دقائق قراءة" data-en="${p.r} min read">${p.r} دقائق قراءة</span></span>
-        <h3 data-ar="${p.ar}" data-en="${p.en}">${p.ar}</h3>
-        <p data-ar="${p.exar}" data-en="${p.exen}">${p.exar}</p>
-      </span></a>`).join('');
+  const slug=new URLSearchParams(location.search).get('a')||'production-cost';
+  const art=ARTICLES.find(x=>x.slug===slug)||ARTICLES[0];
+  const isAr=()=>document.documentElement.lang!=='en';
+  const $=id=>document.getElementById(id);
+  const setTxt=(el,ar,en)=>{ el.dataset.ar=ar; el.dataset.en=en; el.textContent=isAr()?ar:en; };
+
+  /* الترويسة من القائمة المشتركة */
+  setTxt($('attl'),art.ar,art.en); setTxt($('acrumb'),art.ar,art.en); setTxt($('atag'),art.car,art.cen);
+  setTxt($('adate'),art.dar,art.den); setTxt($('aread'),`${art.r} دقائق قراءة`,`${art.r} min read`);
+  $('acover').src=art.img;
+  const docTitle=()=>{ document.title=(isAr()?art.ar:art.en)+' — Blue'; };
+  docTitle();
+  const md=document.querySelector('meta[name="description"]')||document.head.appendChild(Object.assign(document.createElement('meta'),{name:'description'}));
+  md.content=art.exar;
+  const can=document.querySelector('link[rel="canonical"]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'canonical'}));
+  can.href=`https://blue-network.sa/article?a=${art.slug}`;
+
+  /* مشاركة */
+  const url=can.href, t=encodeURIComponent(art.ar);
+  $('sh-wa').href=`https://wa.me/?text=${t}%20${encodeURIComponent(url)}`;
+  $('sh-x').href=`https://x.com/intent/post?text=${t}&url=${encodeURIComponent(url)}`;
+  $('sh-in').href=`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  $('sh-cp').addEventListener('click',e=>{ e.preventDefault();
+    navigator.clipboard?.writeText(url).then(()=>{ const el=$('sh-cp'); const o=el.textContent;
+      el.textContent=isAr()?'تم النسخ ✓':'Copied ✓'; setTimeout(()=>el.textContent=o,1600); }); });
+
+  /* المقالات ذات الصلة: نفس التصنيف أولاً */
+  const rel=ARTICLES.filter(x=>x.slug!==art.slug).sort((x,y)=>(y.k===art.k)-(x.k===art.k)).slice(0,3);
+  $('rel').innerHTML=rel.map(x=>postCard(x,false)).join('');
+
+  if(art.local){ document.addEventListener('click',e=>{ if(e.target.closest('#lang')) setTimeout(docTitle,0); }); return; }
+
+  /* نص المقال من قاعدة البيانات */
+  const body=$('abody'), toc=$('atoc');
+  body.classList.add('wait'); toc.classList.add('wait');
+  let data=null;
+  const paint=()=>{
+    docTitle();
+    if(!data) return;
+    const r=mdToHtml((isAr()?data.body_ar:data.body_en)||data.body_ar||'');
+    body.innerHTML=r.html;
+    if(r.toc.length){ toc.hidden=false;
+      toc.querySelector('ol').innerHTML=r.toc.map(x=>`<li><a href="#${x.id}">${x.t.replace(/\*\*/g,'')}</a></li>`).join('');
+    } else toc.hidden=true;
+    body.classList.remove('wait'); toc.classList.remove('wait'); body.classList.add('ready'); toc.classList.add('ready');
+  };
+  fetch(`${window.SB_URL}/rest/v1/posts?slug=eq.${encodeURIComponent(art.slug)}&published=eq.true&select=body_ar,body_en`,
+    {headers:{apikey:window.SB_KEY,Authorization:'Bearer '+window.SB_KEY}})
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(rows=>{ data=rows[0]; if(!data) throw 0; paint(); })
+    .catch(()=>{ toc.hidden=true;
+      body.innerHTML=`<p class="anote">${isAr()?'تعذّر تحميل المقال الآن. حدّث الصفحة أو عُد إلى <a href="blog.html">المدونة</a>.'
+        :'We couldn\'t load this article right now. Refresh the page or go back to the <a href="blog.html">blog</a>.'}</p>`;
+      body.classList.remove('wait'); body.classList.add('ready'); });
+  document.addEventListener('click',e=>{ if(e.target.closest('#lang')) setTimeout(paint,0); });
 });
 </script>
 </body>
