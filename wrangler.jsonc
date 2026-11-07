@@ -2,8 +2,13 @@
   // Blue — إعدادات النشر على Cloudflare Workers (موقع ثابت)
   "name": "blue-website",
   "compatibility_date": "2026-10-25",
+  "workers_dev": true,
   "assets": {
     "directory": "./",
     "not_found_handling": "404-page"
-  }
+  },
+  "routes": [
+    { "pattern": "blue-network.sa", "custom_domain": true },
+    { "pattern": "www.blue-network.sa", "custom_domain": true }
+  ]
 }

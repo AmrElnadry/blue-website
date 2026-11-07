@@ -8,3 +8,4 @@ vercel.json
 wrangler.jsonc
 .assetsignore
 index-v2.html
+CNAME
