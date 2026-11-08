@@ -152,7 +152,7 @@ html[lang="ar"] .eyebrow{letter-spacing:.06em;font-size:12px}
 
 /* الفلاتر */
 .filters{display:flex;gap:5px;background:rgba(255,255,255,.055);padding:6px;border-radius:12px;flex-wrap:wrap}
-.filters button{background:none;border:0;color:#9c9ca4;font-size:13px;padding:8px 15px;border-radius:8px;
+.filters button{background:none;border:0;color:#9c9ca4;font-family:var(--nav);font-weight:500;font-size:13px;padding:8px 15px;border-radius:8px;
   transition:.3s}
 .filters button.on{background:rgba(255,255,255,.1);color:var(--accent2)}
 .shead{display:flex;align-items:flex-end;justify-content:flex-start;gap:30px;margin-bottom:46px;flex-wrap:wrap}
