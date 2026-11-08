@@ -788,11 +788,6 @@ html[lang="en"] .cttl{line-height:1.02;max-width:16ch}
 .ferr{margin-top:16px;padding:12px 14px;border-radius:12px;background:rgba(224,72,72,.1);
   border:1px solid rgba(224,72,72,.35);color:#f3c4c4;font-size:14px;line-height:1.8}
 .ferr[hidden]{display:none}
-.fnext{list-style:none;counter-reset:fn;margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,.07);
-  display:grid;gap:10px}
-.fnext li{counter-increment:fn;display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;
-  font-size:13.5px;line-height:1.8;color:#b4b4bb}
-.fnext li::before{content:counter(fn);font-family:var(--en);font-weight:700;font-size:12px;color:var(--accent2)}
 .okmsg{display:none;padding:20px 0}
 .okmsg.show{display:block}
 .okmsg .ic{width:56px;height:56px;border-radius:50%;background:#202027;display:grid;
