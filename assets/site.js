@@ -635,8 +635,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   const ring=document.createElement('div'); ring.className='cur-ring';
   document.body.append(cur,ring);
   let mx=0,my=0,rx=0,ry=0;
+  /* فوق مشغّل الفيديو (iframe) لا تصل حركة الماوس للصفحة، فيتجمّد المؤشر فوق الصورة:
+     نخفيه عند الدخول للمشغّل أو الخروج من النافذة، ونعيده من مكان الماوس الفعلي عند العودة */
+  const curOff=v=>document.body.classList.toggle('curoff',v);
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
+    if(document.body.classList.contains('curoff')){rx=mx;ry=my;curOff(false)}
     cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`});
+  document.addEventListener('mouseover',e=>{if(e.target.tagName==='IFRAME')curOff(true)});
+  document.documentElement.addEventListener('mouseleave',()=>curOff(true));
   (function loop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
     ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(loop)})();
   document.addEventListener('mouseover',e=>

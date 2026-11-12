@@ -35,6 +35,7 @@ button{font-family:inherit;cursor:none}
 .cur-ring{position:fixed;z-index:299;pointer-events:none;top:0;left:0;width:38px;height:38px;
   border:1px solid rgba(255,255,255,.35);border-radius:50%;transform:translate(-50%,-50%);
   transition:width .4s var(--ease),height .4s var(--ease),border-color .4s,background .4s}
+body.curoff .cur,body.curoff .cur-ring{opacity:0;transition:opacity .2s}
 body.hot .cur{width:0;height:0}
 body.hot .cur-ring{width:78px;height:78px;border-color:var(--accent);background:rgba(47,143,224,.14)}
 
