@@ -643,6 +643,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`});
   document.addEventListener('mouseover',e=>{if(e.target.tagName==='IFRAME')curOff(true)});
   document.documentElement.addEventListener('mouseleave',()=>curOff(true));
+  /* الضغط داخل المشغّل ينقل التركيز إليه فتفقد الصفحة التركيز */
+  addEventListener('blur',()=>{if(document.activeElement&&document.activeElement.tagName==='IFRAME')curOff(true)});
+  window.blueCursorOff=()=>curOff(true);
   (function loop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
     ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(loop)})();
   document.addEventListener('mouseover',e=>
