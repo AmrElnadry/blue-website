@@ -635,18 +635,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   const ring=document.createElement('div'); ring.className='cur-ring';
   document.body.append(cur,ring);
   let mx=0,my=0,rx=0,ry=0;
-  /* فوق مشغّل الفيديو (iframe) لا تصل حركة الماوس للصفحة، فيتجمّد المؤشر فوق الصورة:
-     نخفيه عند الدخول للمشغّل أو الخروج من النافذة، ونعيده من مكان الماوس الفعلي عند العودة */
+  /* فوق مشغّل الفيديو (iframe) لا تصل حركة الماوس للصفحة، فيتجمّد المؤشر فوق الصورة.
+     القاعدة: كلما كان آخر موضع معروف للماوس فوق iframe (أو خرج من النافذة) يختفي المؤشر،
+     ونتحقق من ذلك في كل حركة وأيضاً دورياً، لأن المشغّل قد يظهر تحت ماوس ثابت بلا أي حدث */
+  let away=false, tick=0;
+  const overFrame=(x,y)=>{const el=document.elementFromPoint(x,y);return !!el&&el.tagName==='IFRAME'};
   const curOff=v=>document.body.classList.toggle('curoff',v);
-  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
-    if(document.body.classList.contains('curoff')){rx=mx;ry=my;curOff(false)}
+  addEventListener('mousemove',e=>{
+    const wasOff=document.body.classList.contains('curoff');
+    mx=e.clientX;my=e.clientY;away=false;
+    const off=e.target.tagName==='IFRAME'||overFrame(mx,my);
+    if(wasOff&&!off){rx=mx;ry=my}
+    curOff(off);
     cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`});
   document.addEventListener('mouseover',e=>{if(e.target.tagName==='IFRAME')curOff(true)});
-  document.documentElement.addEventListener('mouseleave',()=>curOff(true));
-  /* الضغط داخل المشغّل ينقل التركيز إليه فتفقد الصفحة التركيز */
+  document.documentElement.addEventListener('mouseleave',()=>{away=true;curOff(true)});
   addEventListener('blur',()=>{if(document.activeElement&&document.activeElement.tagName==='IFRAME')curOff(true)});
   window.blueCursorOff=()=>curOff(true);
-  (function loop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
+  (function loop(){
+    if(++tick%6===0&&!away&&overFrame(mx,my))curOff(true);
+    rx+=(mx-rx)*.16;ry+=(my-ry)*.16;
     ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(loop)})();
   document.addEventListener('mouseover',e=>
     document.body.classList.toggle('hot',!!e.target.closest('a,button,summary,input,textarea,select')));
