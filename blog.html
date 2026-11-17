@@ -89,9 +89,10 @@ html[lang="en"] .feat .bd{padding:clamp(26px,3vw,44px) 0 clamp(26px,3vw,44px) cl
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const LIST=ARTICLES.filter(a=>a.slug!=='production-cost');
   const box=document.getElementById('posts');
   const render=list=>{ box.innerHTML=list.map(a=>postCard(a)).join(''); window.applyLang&&window.applyLang(); };

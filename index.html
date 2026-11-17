@@ -123,6 +123,7 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
 /* بدون حركة أو مع توفير البيانات: تبقى الصورة الثابتة فقط */
@@ -132,7 +133,7 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
     v.removeAttribute('autoplay'); v.preload='none'; v.pause();
   }
 })();
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const mos=document.getElementById('mosaic');
   mos.innerHTML = PROJECTS.slice(0,7).map(p=>tile(p)).join('');
   layMosaic(mos);

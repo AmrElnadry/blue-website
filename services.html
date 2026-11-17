@@ -56,9 +56,10 @@
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   /* الخدمات: مجموعات بسطور مطوّرة */
   document.getElementById('phases').innerHTML = PHASES.map((ph,gi)=>`
     <div class="svc-group rev">

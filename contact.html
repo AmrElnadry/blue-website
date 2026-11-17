@@ -166,7 +166,7 @@
   }catch(e){}
 })();
 
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const form=document.getElementById('f1'), ar=()=>document.documentElement.lang!=='en';
   const svc=document.getElementById('fsvc'), msg=document.getElementById('fmsg');
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

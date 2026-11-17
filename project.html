@@ -109,10 +109,11 @@ html[lang="ar"] .nextp .t{font-family:var(--ar);font-weight:700;text-transform:n
 
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
 /* صفحة عمل واحدة لكل المشاريع: project.html?w=<slug> */
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const slug=new URLSearchParams(location.search).get('w');
   const i=Math.max(0,PROJECTS.findIndex(p=>p.slug===slug)), p=PROJECTS[i];
   const t=(el,ar,en)=>{el.dataset.ar=ar; el.dataset.en=en||ar; el.textContent=ar;};
@@ -122,11 +123,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   pv.style.aspectRatio=p.r; pv.style.setProperty('--r',w/h); pv.classList.toggle('tall',h>w);
   /* صورة الغلاف أولاً، والمشغّل يُحمَّل عند الضغط: لا مربع أسود ولا تحميل قبل الحاجة */
   const src=p.gd?`https://drive.google.com/file/d/${p.gd}/preview`
-    :`https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0&autoplay=1`;
+    :p.yt?`https://www.youtube-nocookie.com/embed/${p.yt}?autoplay=1&rel=0`
+    :p.vid?`https://player.vimeo.com/video/${p.vid}?dnt=1&title=0&byline=0&portrait=0&autoplay=1`:'';
   pv.innerHTML=`<button class="poster" type="button" aria-label="تشغيل الفيديو: ${p.ar}">
     <img src="${p.img}" alt="" fetchpriority="high">
     <span class="pl"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span></button>`;
-  pv.querySelector('.poster').addEventListener('click',()=>{
+  if(!src) pv.querySelector('.pl').remove();
+  else pv.querySelector('.poster').addEventListener('click',()=>{
     pv.innerHTML=`<iframe src="${src}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="${p.en}"></iframe>`;
     /* المشغّل يظهر تحت الماوس وهو ثابت، فلا يصل أي حدث للصفحة: نخفي المؤشر المخصص فوراً */
     window.blueCursorOff&&window.blueCursorOff();
@@ -143,7 +146,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     p.cl_ar && ['العميل','CLIENT',`<dd data-ar="${p.cl_ar}" data-en="${p.cl_en}">${p.cl_ar}</dd>`],
     ['السنة','YEAR',`<dd><bdi dir="ltr">${p.y}</bdi></dd>`],
     ['التصنيف','CATEGORY',`<dd data-ar="${p.car}" data-en="${p.cen}">${p.car}</dd>`],
-    ['المدة','DURATION',`<dd><bdi dir="ltr">${mm}</bdi></dd>`]
+    p.d>0 && ['المدة','DURATION',`<dd><bdi dir="ltr">${mm}</bdi></dd>`]
   ].filter(Boolean);
   document.getElementById('pfacts').innerHTML=facts.map(([ar,en,dd])=>
     `<div><dt data-ar="${ar}" data-en="${en}">${ar}</dt>${dd}</div>`).join('');

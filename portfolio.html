@@ -47,9 +47,10 @@
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const mos=document.getElementById('mosaic');
   mos.innerHTML = PROJECTS.map(p=>tile(p)).join('');
   layMosaic(mos);

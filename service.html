@@ -67,9 +67,10 @@
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   const slug=new URLSearchParams(location.search).get('s');
   const sv=SERVICES.find(x=>x.slug===slug) || SERVICES.find(x=>x.slug==='motion');
   const ph=PHASES.find(p=>p.items.includes(sv));

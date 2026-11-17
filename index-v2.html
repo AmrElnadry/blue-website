@@ -171,9 +171,10 @@ html[lang="ar"] .pin h1 .ln{padding-block:.14em .2em;margin-block:-.14em -.2em}
 
 <!-- السكرول الانسيابي — يعمل بدونه الموقع عادي لو تعذّر تحميله -->
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
 
   /* ── 1. السكرول الانسيابي ── */
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

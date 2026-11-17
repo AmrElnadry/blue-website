@@ -103,9 +103,10 @@
 <div data-slot="cta"></div>
 <div id="slot-footer"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+whenReady(()=>{
   document.getElementById('logos').innerHTML = CLIENTS.map(c=>`<div>${logoImg(c)}</div>`).join('');
 });
 </script>

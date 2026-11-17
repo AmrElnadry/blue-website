@@ -699,7 +699,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>window.revealScan(),0);
   setTimeout(()=>window.revealScan(),250);
 
-  /* الفلاتر */
+  /* الفلاتر: تُبنى بعد وصول البيانات لأن تصنيفات جديدة قد تأتي من قاعدة البيانات */
+  whenReady(()=>{
   document.querySelectorAll('[data-filters]').forEach(box=>{
     const target=document.querySelector(box.dataset.filters);
     box.innerHTML=CATS.map((c,i)=>
@@ -711,6 +712,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         t.classList.toggle('hide', b.dataset.k!=='all' && t.dataset.k!==b.dataset.k));
       layMosaic(target);
     });
+  });
+
   });
 
   /* اللغة */
@@ -729,3 +732,79 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>apply(isAr),0);
 
 });
+
+/* ═══════════════════════════════════════════════════════════
+   المحتوى من لوحة التحكم: المشاريع والمقالات المنشورة في Supabase
+   تُضاف إلى القوائم الثابتة أعلاه (الأحدث أولاً). المعرّف المكرّر يبقى بنسخته الثابتة.
+   إذا تأخّرت قاعدة البيانات أكثر من ثانيتين ونصف تُعرض القوائم الثابتة وحدها.
+   ═══════════════════════════════════════════════════════════ */
+function videoRef(u){
+  let m; u=u||'';
+  if((m=u.match(/vimeo\.com\/(?:video\/|channels\/[\w-]+\/)?(\d+)/))) return {vid:m[1]};
+  if((m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return {gd:m[1]};
+  if((m=u.match(/(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/))) return {yt:m[1]};
+  return {};
+}
+function mergeProjects(rows){
+  const add=[];
+  (rows||[]).forEach(r=>{
+    if(!r.slug || PROJECTS.some(p=>p.slug===r.slug)) return;
+    const c=r.categories||{};
+    let cat=CATS.find(x=>x.k===c.key);
+    if(!cat && c.key){ cat={k:c.key, ar:c.name_ar, en:c.name_en||c.name_ar}; CATS.push(cat); }
+    if(!cat) cat={k:'other', ar:'أعمال', en:'Work'};
+    add.push(Object.assign({
+      slug:r.slug, k:cat.k, car:cat.ar, cen:cat.en,
+      ar:r.title_ar, en:r.title_en||r.title_ar,
+      y:r.year||new Date(r.created_at).getFullYear(), d:0, r:'16/9',
+      cl_ar:r.client||'', cl_en:r.client||'',
+      sar:r.summary_ar||'', sen:r.summary_en||r.summary_ar||'',
+      img:r.cover_url||'assets/og.jpg', db:true
+    }, videoRef(r.video_url)));
+  });
+  PROJECTS.unshift(...add);
+}
+function mergeArticles(rows){
+  const add=[];
+  (rows||[]).forEach(r=>{
+    if(!r.slug || ARTICLES.some(a=>a.slug===r.slug)) return;
+    let c=BLOG_CATS.find(x=>x.ar===r.tag_ar);
+    if(!c && r.tag_ar){ c={k:'t'+BLOG_CATS.length, ar:r.tag_ar, en:r.tag_en||r.tag_ar}; BLOG_CATS.push(c); }
+    if(!c) c={k:'misc', ar:'مقالات', en:'Articles'};
+    const d=new Date(r.published_at||r.created_at||Date.now());
+    add.push({
+      slug:r.slug, k:c.k, car:c.ar, cen:c.en, r:r.read_minutes||5,
+      dar:d.toLocaleDateString('ar-SA-u-nu-latn-ca-gregory',{day:'numeric',month:'long',year:'numeric'}),
+      den:d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}),
+      img:r.cover_url||'assets/og.jpg',
+      ar:r.title_ar, en:r.title_en||r.title_ar,
+      exar:r.excerpt_ar||'', exen:r.excerpt_en||r.excerpt_ar||'',
+      url:`article.html?a=${r.slug}`, db:true
+    });
+  });
+  ARTICLES.unshift(...add);
+}
+const BLUE_DATA=(async()=>{
+  const U=window.SB_URL, K=window.SB_KEY;
+  if(!U||!K) return;
+  const h={apikey:K, Authorization:'Bearer '+K};
+  const get=q=>fetch(`${U}/rest/v1/${q}`,{headers:h}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+  const res=await Promise.race([
+    Promise.all([
+      get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,cover_url,video_url,summary_ar,summary_en,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
+      get('posts?published=eq.true&select=slug,title_ar,title_en,excerpt_ar,excerpt_en,cover_url,tag_ar,tag_en,read_minutes,published_at,created_at&order=published_at.desc')
+    ]),
+    new Promise(r=>setTimeout(()=>r(null),2500))
+  ]);
+  if(!res) return;
+  mergeProjects(res[0]); mergeArticles(res[1]);
+})().catch(()=>{});
+const DOM_READY=new Promise(r=>document.readyState==='loading'
+  ? document.addEventListener('DOMContentLoaded',r) : r());
+/* كل صفحة ترسم محتواها عبر whenReady بدل DOMContentLoaded */
+function whenReady(fn){
+  Promise.all([DOM_READY,BLUE_DATA]).then(()=>{
+    try{ fn(); }
+    finally{ window.revealScan&&window.revealScan(); window.applyLang&&window.applyLang(); }
+  });
+}
