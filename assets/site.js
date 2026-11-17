@@ -590,7 +590,8 @@ function buildLogos(){
 }
 
 function tile(p, size=''){
-  return `<a href="project.html?w=${p.slug}" class="tile ${size}" data-k="${p.k}">
+  const [w,h]=String(p.r||'16/9').split('/').map(Number);
+  return `<a href="project.html?w=${p.slug}" class="tile ${size}${h>w?' pt':''}" data-k="${p.k}">
     <img src="${p.img}" alt="" loading="lazy" decoding="async">
     <span class="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>
     <span class="ov"><span class="c" data-ar="${p.car}" data-en="${p.cen}">${p.car}</span>
@@ -604,12 +605,30 @@ const SPAN={2:'s-md',3:'s-wd',4:'s-lg',6:'s-fl'};
 function layMosaic(box){
   if(!box) return;
   const ts=[...box.querySelectorAll('.tile:not(.hide)')];
+  const ALL=['s-md','s-wd','s-lg','s-fl','s-pt','s-half','s-sq','s-big','c1','c2'];
+  const set=(t,c)=>{ t.classList.remove(...ALL); t.classList.add(c); };
+  const isP=t=>t.classList.contains('pt');
   let i=0,r=0;
   while(i<ts.length){
+    /* فيديو طولي (ريلز) قريب: صف بارتفاع الفيديو الطولي. حتى 3 فيديوهات طولية،
+       أو 1–2 طولي ومعها عملان عرضيان مكدّسان بجانبها */
+    if(ts.slice(i,i+3).some(isP)){
+      const g=[]; let P=0,L=0;
+      while(i<ts.length){
+        const t=ts[i];
+        if(isP(t)){ if(L ? P>=2 : P>=3) break; P++; }
+        else { if(L>=2 || P>=3) break; L++; }
+        g.push(t); i++;
+        if((P===3&&!L) || (P>=1&&L===2)) break;
+      }
+      g.forEach(t=>set(t, isP(t) ? 's-pt' : P===1 ? (L===2?'s-half':'s-big') : P===2 ? (L===2?'s-sq':'s-pt') : 's-half'));
+      if(!L && P<3) g[0].classList.add('c'+P);
+      continue;
+    }
     const left=ts.length-i;
     let row=ROWS[r++%ROWS.length];
     if(left<row.length) row=left===1?[6]:[3,3];
-    row.forEach(n=>{ const t=ts[i++]; t.classList.remove('s-md','s-wd','s-lg','s-fl'); t.classList.add(SPAN[n]); });
+    row.forEach(n=>set(ts[i++], SPAN[n]));
   }
 }
 window.layMosaic=layMosaic;

@@ -71,6 +71,7 @@ const SECTIONS = {
           {n:'client', t:'text', i18n:true, keys:{ar:'client', en:'client_en'}, label:'اسم العميل'}]},
       {n:'video_url', t:'text', label:'رابط الفيديو', dir:'ltr',
        ph:'https://vimeo.com/… أو https://youtube.com/…'},
+      {n:'ratio', t:'hidden'}, {n:'duration', t:'hidden'},
       {n:'cover_url', t:'image', label:'صورة الغلاف', frames:'video_url',
        hint:'يُفضّل مقاس عريض 16:9 بعرض 1600 بكسل على الأقل.'},
       {n:'summary', t:'textarea', i18n:true, label:'وصف مختصر',
@@ -446,7 +447,7 @@ const keyOf  = (f, lang) => f.keys ? f.keys[lang] : f.i18n ? `${f.n}_${lang}` : 
 const keysOf = f => f.i18n ? [keyOf(f, 'ar'), keyOf(f, 'en')] : [f.n];
 
 function fieldHTML(f, v, lang) {
-  if (f.auto) return '';
+  if (f.auto || f.t === 'hidden') return '';
   const name = keyOf(f, lang);
   const val  = v[name];
   const dir  = f.dir || (f.i18n && lang === 'en' ? 'ltr' : (f.t === 'slug' ? 'ltr' : 'rtl'));
@@ -625,6 +626,16 @@ const slugify = s => String(s || '').toLowerCase().trim()
 async function save(k, row, skipEn = false) {
   const s = SECTIONS[k], btn = $('#mSave');
   $('#enWarn')?.remove();
+  // أبعاد الفيديو ومدته تُقرأ تلقائياً من Vimeo (الريلز الطولية تظهر بشكلها في الموقع)
+  if (k === 'projects' && formState.video_url && (!formState.ratio || formState.video_url !== row?.video_url)) {
+    const ref = videoRefA(String(formState.video_url));
+    if (ref.vid) {
+      try {
+        const o = await fetch(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent('https://vimeo.com/' + ref.vid)}`).then(r => r.ok ? r.json() : null);
+        if (o && o.width && o.height) { formState.ratio = `${o.width}/${o.height}`; if (o.duration) formState.duration = Math.round(o.duration); }
+      } catch {}
+    } else if (ref.yt) formState.ratio = /shorts\//.test(formState.video_url) ? '9/16' : '16/9';
+  }
   const payload = {};
   flat(s.fields).forEach(f => {
     keysOf(f).forEach(key => {

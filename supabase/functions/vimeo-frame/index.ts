@@ -59,7 +59,14 @@ Deno.serve(async (req) => {
     if (r.ok) sizes = (await r.json()).sizes;
   }
   if (!sizes || !sizes.length) return json({ error: "not_ready" }, 504);
-  const best = sizes.reduce((a, b) => (b.width > a.width ? b : a));
+  let best = sizes.reduce((a, b) => (b.width > a.width ? b : a));
+  // صورة بشكل الفيديو نفسه (الطولي يبقى طولياً بلا حواف سوداء)، والضلع الأطول 1920
+  const meta = await fetch(`https://api.vimeo.com/videos/${id}?fields=width,height`, { headers: V }).then((r) => r.ok ? r.json() : null).catch(() => null);
+  if (pic.base_link && meta?.width && meta?.height) {
+    const k = 1920 / Math.max(meta.width, meta.height);
+    const w = Math.round(meta.width * Math.min(1, k)), h = Math.round(meta.height * Math.min(1, k));
+    best = { width: w, link: `${pic.base_link}-d_${w}x${h}` };
+  }
 
   let img: Response | null = null;
   for (let i = 0; i < 6; i++) {
