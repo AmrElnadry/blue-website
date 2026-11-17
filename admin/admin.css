@@ -26,6 +26,11 @@ input,select,textarea,button{font-family:inherit;font-size:14px}
 .login-box img{height:34px;margin:0 auto 28px}
 .login-box h1{font-size:19px;font-weight:600;text-align:center;margin-bottom:6px}
 .login-box p.sub{color:var(--dim);font-size:13px;text-align:center;margin-bottom:26px}
+.login-box[hidden]{display:none}
+.lnk{display:block;margin:16px auto 0;background:none;border:0;color:var(--dim);font:inherit;font-size:12.5px;cursor:pointer}
+.lnk:hover{color:var(--accent)}
+.okmsg{background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);color:#8be9bd;
+  padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:16px;line-height:1.6}
 
 /* ── عناصر النموذج ── */
 .field{margin-bottom:16px}

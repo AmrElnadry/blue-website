@@ -3,6 +3,11 @@
    ═══════════════════════════════════════════════════════════ */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// روابط الدعوة واستعادة كلمة المرور تصل بـ #access_token…&type=invite|recovery
+// أو بـ #error=… لو انتهت صلاحيتها. نقرأها هنا، والمكتبة تستخدم الرمز لتسجيل الدخول.
+const AUTH_HASH = new URLSearchParams(location.hash.slice(1));
+const AUTH_TYPE = AUTH_HASH.get('type');
+const AUTH_ERR  = AUTH_HASH.get('error_code') || AUTH_HASH.get('error');
 const sb = createClient(window.SB_URL, window.SB_KEY);
 const $  = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
@@ -227,9 +232,54 @@ let user = null;
 
 async function boot() {
   const { data } = await sb.auth.getSession();
-  if (data.session) { user = data.session.user; enterApp(); }
-  else { $('#login').style.display = 'grid'; }
+  if (AUTH_HASH.has('access_token') || AUTH_ERR) history.replaceState(null, '', location.pathname + location.search);
+  if (data.session && (AUTH_TYPE === 'invite' || AUTH_TYPE === 'recovery')) {
+    user = data.session.user; return showPwForm(AUTH_TYPE);
+  }
+  if (data.session) { user = data.session.user; enterApp(); return; }
+  $('#login').style.display = 'grid';
+  if (AUTH_ERR) {
+    const err = $('#loginErr');
+    err.textContent = /expired|otp/i.test(AUTH_ERR)
+      ? 'انتهت صلاحية الرابط أو استُخدم من قبل. اضغط «نسيت كلمة المرور؟» بالأسفل ليصلك رابط جديد.'
+      : 'تعذّر فتح الرابط. اضغط «نسيت كلمة المرور؟» ليصلك رابط جديد.';
+    err.classList.add('on');
+  }
 }
+
+function showPwForm(type) {
+  $('#login').style.display = 'grid';
+  $('#loginForm').hidden = true; $('#pwForm').hidden = false;
+  $('#pwTitle').textContent = type === 'invite' ? 'أهلاً بك في فريق Blue' : 'كلمة مرور جديدة';
+  $('#pwSub').textContent = (type === 'invite' ? 'اختر كلمة مرور لحسابك ' : 'اختر كلمة مرور جديدة لـ ') + '\u2066' + user.email + '\u2069';
+  $('#pw1').focus();
+}
+
+$('#pwForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#pwErr'), btn = $('#pwBtn');
+  err.classList.remove('on');
+  if ($('#pw1').value !== $('#pw2').value) { err.textContent = 'كلمتا المرور غير متطابقتين.'; err.classList.add('on'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  const { error } = await sb.auth.updateUser({ password: $('#pw1').value });
+  btn.disabled = false; btn.textContent = 'حفظ والدخول';
+  if (error) {
+    err.textContent = /should be|least|weak/i.test(error.message) ? 'كلمة المرور قصيرة أو ضعيفة، جرّب كلمة أطول.'
+      : /different/i.test(error.message) ? 'اختر كلمة مرور مختلفة عن السابقة.' : error.message;
+    err.classList.add('on'); return;
+  }
+  $('#pwForm').hidden = true; $('#loginForm').hidden = false;
+  enterApp();
+});
+
+$('#forgot').addEventListener('click', async () => {
+  const email = $('#email').value.trim(), err = $('#loginErr');
+  err.classList.remove('on'); document.querySelector('.okmsg')?.remove();
+  if (!email) { err.textContent = 'اكتب بريدك الإلكتروني أولاً ثم اضغط «نسيت كلمة المرور؟».'; err.classList.add('on'); $('#email').focus(); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/admin/' });
+  if (error) { err.textContent = /rate|seconds/i.test(error.message) ? 'انتظر دقيقة ثم حاول مرة أخرى.' : error.message; err.classList.add('on'); return; }
+  err.insertAdjacentHTML('afterend', '<div class="okmsg">لو البريد مسجّل عندنا، سيصلك رابط لاختيار كلمة مرور جديدة خلال دقائق.</div>');
+});
 
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -891,7 +941,7 @@ function wireSettingsImages() {
 /* ─────────── تشغيل ─────────── */
 window.addEventListener('hashchange', () => {
   const k = location.hash.slice(1);
-  if (user && k && k !== current) go(k);
+  if (user && k && k !== current && !k.includes('=')) go(k);
 });
 boot();
 

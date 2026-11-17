@@ -28,6 +28,23 @@
       <input class="inp" type="password" id="pass" required autocomplete="current-password" dir="ltr">
     </div>
     <button class="btn full" type="submit" id="loginBtn" style="margin-top:8px">دخول</button>
+    <button class="lnk" type="button" id="forgot">نسيت كلمة المرور؟</button>
+  </form>
+  <form class="login-box" id="pwForm" hidden>
+    <img src="../assets/logo-full.svg" alt="Blue">
+    <h1 id="pwTitle">اختر كلمة المرور</h1>
+    <p class="sub" id="pwSub"></p>
+    <div class="err" id="pwErr"></div>
+    <div class="field">
+      <label>كلمة المرور الجديدة</label>
+      <input class="inp" type="password" id="pw1" required minlength="8" autocomplete="new-password" dir="ltr">
+      <div class="hint">‏8 أحرف على الأقل</div>
+    </div>
+    <div class="field">
+      <label>تأكيد كلمة المرور</label>
+      <input class="inp" type="password" id="pw2" required minlength="8" autocomplete="new-password" dir="ltr">
+    </div>
+    <button class="btn full" type="submit" id="pwBtn" style="margin-top:8px">حفظ والدخول</button>
   </form>
 </div>
 
