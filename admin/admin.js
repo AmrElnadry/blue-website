@@ -70,6 +70,8 @@ const SECTIONS = {
       {g:[{n:'category_id', t:'ref', ref:'categories', label:'التصنيف'},
           {n:'year', t:'number', label:'السنة', ph:'2025'},
           {n:'client', t:'text', label:'العميل'}]},
+      {n:'client_en', t:'text', label:'اسم العميل بالإنجليزي', dir:'ltr',
+       hint:'يظهر في النسخة الإنجليزية من الموقع. إذا تُرك فارغاً يظهر الاسم العربي.'},
       {n:'cover_url', t:'image', label:'صورة الغلاف',
        hint:'يُفضّل مقاس عريض 16:9 بعرض 1600 بكسل على الأقل.'},
       {n:'video_url', t:'text', label:'رابط الفيديو', dir:'ltr',

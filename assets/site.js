@@ -734,9 +734,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 /* ═══════════════════════════════════════════════════════════
-   المحتوى من لوحة التحكم: المشاريع والمقالات المنشورة في Supabase
-   تُضاف إلى القوائم الثابتة أعلاه (الأحدث أولاً). المعرّف المكرّر يبقى بنسخته الثابتة.
-   إذا تأخّرت قاعدة البيانات أكثر من ثانيتين ونصف تُعرض القوائم الثابتة وحدها.
+   المحتوى من لوحة التحكم: قاعدة البيانات (Supabase) هي المصدر.
+   القوائم الثابتة أعلاه نسخة احتياطية تُعرض فقط إذا تعذّر الاتصال
+   بقاعدة البيانات أو تأخّرت أكثر من ثانيتين ونصف.
    ═══════════════════════════════════════════════════════════ */
 function videoRef(u){
   let m; u=u||'';
@@ -745,59 +745,65 @@ function videoRef(u){
   if((m=u.match(/(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/))) return {yt:m[1]};
   return {};
 }
-function mergeProjects(rows){
-  const add=[];
-  (rows||[]).forEach(r=>{
-    if(!r.slug || PROJECTS.some(p=>p.slug===r.slug)) return;
+/* مسار الصورة نسبي داخل الموقع (assets/…) والروابط الخارجية كما هي */
+const relImg=u=>u ? u.replace(/^\/(?=assets\/)/,'') : '';
+function setProjects(rows){
+  if(!Array.isArray(rows)) return;
+  const list=rows.filter(r=>r.slug).map(r=>{
     const c=r.categories||{};
     let cat=CATS.find(x=>x.k===c.key);
     if(!cat && c.key){ cat={k:c.key, ar:c.name_ar, en:c.name_en||c.name_ar}; CATS.push(cat); }
     if(!cat) cat={k:'other', ar:'أعمال', en:'Work'};
-    add.push(Object.assign({
+    const p=Object.assign({
       slug:r.slug, k:cat.k, car:cat.ar, cen:cat.en,
       ar:r.title_ar, en:r.title_en||r.title_ar,
-      y:r.year||new Date(r.created_at).getFullYear(), d:0, r:'16/9',
-      cl_ar:r.client||'', cl_en:r.client||'',
+      y:r.year||new Date(r.created_at).getFullYear(), d:r.duration||0, r:r.ratio||'16/9',
+      cl_ar:r.client||'', cl_en:r.client_en||r.client||'',
       sar:r.summary_ar||'', sen:r.summary_en||r.summary_ar||'',
-      img:r.cover_url||'assets/og.jpg', db:true
-    }, videoRef(r.video_url)));
+      img:relImg(r.cover_url)||'assets/og.jpg'
+    }, videoRef(r.video_url));
+    if(r.body_ar){ p.brief_ar=r.body_ar; p.brief_en=r.body_en||''; }
+    if(Array.isArray(r.credits) && r.credits.length) p.credits=r.credits;
+    return p;
   });
-  PROJECTS.unshift(...add);
+  PROJECTS.splice(0, PROJECTS.length, ...list);
 }
-function mergeArticles(rows){
-  const add=[];
-  (rows||[]).forEach(r=>{
-    if(!r.slug || ARTICLES.some(a=>a.slug===r.slug)) return;
+/* مقالات نصّها مكتوب داخل article.html نفسه */
+const LOCAL_ARTICLES=['production-cost'];
+function setArticles(rows){
+  if(!Array.isArray(rows)) return;
+  const list=rows.filter(r=>r.slug).map(r=>{
     let c=BLOG_CATS.find(x=>x.ar===r.tag_ar);
     if(!c && r.tag_ar){ c={k:'t'+BLOG_CATS.length, ar:r.tag_ar, en:r.tag_en||r.tag_ar}; BLOG_CATS.push(c); }
     if(!c) c={k:'misc', ar:'مقالات', en:'Articles'};
     const d=new Date(r.published_at||r.created_at||Date.now());
-    add.push({
-      slug:r.slug, k:c.k, car:c.ar, cen:c.en, r:r.read_minutes||5,
-      dar:d.toLocaleDateString('ar-SA-u-nu-latn-ca-gregory',{day:'numeric',month:'long',year:'numeric'}),
-      den:d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}),
-      img:r.cover_url||'assets/og.jpg',
+    const a={
+      slug:r.slug, k:c.k, car:c.ar, cen:c.en, r:r.read_minutes||5, url:`article.html?a=${r.slug}`,
+      dar:d.toLocaleDateString('ar-SA-u-nu-latn-ca-gregory',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Riyadh'}),
+      den:d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Riyadh'}),
+      img:relImg(r.cover_url)||'assets/og.jpg',
       ar:r.title_ar, en:r.title_en||r.title_ar,
-      exar:r.excerpt_ar||'', exen:r.excerpt_en||r.excerpt_ar||'',
-      url:`article.html?a=${r.slug}`, db:true
-    });
+      exar:r.excerpt_ar||'', exen:r.excerpt_en||r.excerpt_ar||''
+    };
+    if(LOCAL_ARTICLES.includes(r.slug)) a.local=true;
+    return a;
   });
-  ARTICLES.unshift(...add);
+  ARTICLES.splice(0, ARTICLES.length, ...list);
 }
 const BLUE_DATA=(async()=>{
   const U=window.SB_URL, K=window.SB_KEY;
   if(!U||!K) return;
   const h={apikey:K, Authorization:'Bearer '+K};
-  const get=q=>fetch(`${U}/rest/v1/${q}`,{headers:h}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+  const get=q=>fetch(`${U}/rest/v1/${q}`,{headers:h}).then(r=>r.ok?r.json():null).catch(()=>null);
   const res=await Promise.race([
     Promise.all([
-      get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,cover_url,video_url,summary_ar,summary_en,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
+      get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,client_en,cover_url,video_url,summary_ar,summary_en,body_ar,body_en,credits,duration,ratio,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
       get('posts?published=eq.true&select=slug,title_ar,title_en,excerpt_ar,excerpt_en,cover_url,tag_ar,tag_en,read_minutes,published_at,created_at&order=published_at.desc')
     ]),
     new Promise(r=>setTimeout(()=>r(null),2500))
   ]);
   if(!res) return;
-  mergeProjects(res[0]); mergeArticles(res[1]);
+  setProjects(res[0]); setArticles(res[1]);
 })().catch(()=>{});
 const DOM_READY=new Promise(r=>document.readyState==='loading'
   ? document.addEventListener('DOMContentLoaded',r) : r());
