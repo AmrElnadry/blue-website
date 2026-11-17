@@ -3,6 +3,7 @@
 // نحفظها في مخزن الصور (media/covers) ونعيد رابطها.
 // السر المطلوب في Supabase → Edge Functions → Secrets:
 //   VIMEO_TOKEN  رمز وصول من developer.vimeo.com بصلاحيات Public و Private و Edit
+// النشر: supabase functions deploy vimeo-frame --no-verify-jwt  (الدالة تتحقق من صلاحية المستخدم بنفسها، وطلب CORS المسبق لا يحمل رمز دخول)
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const CORS = {
