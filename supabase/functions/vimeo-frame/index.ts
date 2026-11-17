@@ -2,7 +2,7 @@
 // لوحة التحكم ترسل {video_url, time} → نطلب من Vimeo صورة بدقة كاملة من تلك اللحظة،
 // نحفظها في مخزن الصور (media/covers) ونعيد رابطها.
 // السر المطلوب في Supabase → Edge Functions → Secrets:
-//   VIMEO_TOKEN  رمز وصول من developer.vimeo.com بصلاحيات Public و Private و Edit
+//   VIMEO_TOKEN  رمز وصول من developer.vimeo.com بصلاحيات Public و Private و Edit و Upload
 // النشر: supabase functions deploy vimeo-frame --no-verify-jwt  (الدالة تتحقق من صلاحية المستخدم بنفسها، وطلب CORS المسبق لا يحمل رمز دخول)
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
   if (!mk.ok) {
     const t = await mk.text();
     console.error("vimeo create", mk.status, t);
-    return json({ error: mk.status === 401 ? "bad_token" : mk.status === 403 || mk.status === 404 ? "no_access" : "vimeo", detail: t.slice(0, 300) }, 502);
+    const code = mk.status === 401 ? "bad_token" : /scope/i.test(t) ? "scope" : mk.status === 403 || mk.status === 404 ? "no_access" : "vimeo";
+    return json({ error: code, detail: t.slice(0, 300) }, 502);
   }
   const pic = await mk.json();
 

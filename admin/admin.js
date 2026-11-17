@@ -730,7 +730,8 @@ function wireFrames(k) {
           if (code || !data?.url) throw new Error(({
             no_token: 'لم يُضبط رمز Vimeo في الإعدادات بعد.',
             bad_token: 'رمز Vimeo غير صالح. أنشئ رمزاً جديداً.',
-            no_access: 'هذا الفيديو ليس على حساب Blue في Vimeo، أو الرمز بدون صلاحية Edit.',
+            scope: 'رمز Vimeo ينقصه صلاحية. أنشئ رمزاً جديداً بصلاحيات Public و Private و Edit و Upload.',
+            no_access: 'هذا الفيديو ليس على حساب Blue في Vimeo.',
             not_allowed: 'حسابك لا يملك صلاحية المشاريع.',
             not_ready: 'Vimeo لم يجهّز الصورة بعد. حاول مرة أخرى بعد ثوانٍ.'
           })[code] || 'تعذّر جلب اللقطة. حاول مرة أخرى.');
