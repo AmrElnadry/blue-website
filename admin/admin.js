@@ -205,8 +205,18 @@ const SECTIONS = {
   },
 
   settings: { label:'الإعدادات', icon:I.cog, custom:'settings',
-    desc:'بيانات التواصل والروابط التي تظهر في كل صفحات الموقع' }
+    desc:'بيانات التواصل والروابط التي تظهر في كل صفحات الموقع' },
+
+  team: { label:'الفريق', icon:I.user, custom:'team',
+    desc:'من يدخل لوحة التحكم وصلاحية كل شخص' }
 };
+
+/* الصلاحيات: المالك يرى كل شيء، والمحرر يرى المشاريع فقط (إضافة وتعديل بدون حذف).
+   الحماية الفعلية في قاعدة البيانات (supabase/roles.sql)؛ هنا نخفي ما لا يخصّه فقط. */
+let role = null;
+const ROLE_SECTIONS = { editor: ['projects'] };
+const allowed = k => role === 'owner' || (ROLE_SECTIONS[role] || []).includes(k);
+const canDelete = () => role === 'owner';
 
 /* ═══════════════════════════════════════════════════════════
    المصادقة
@@ -239,12 +249,22 @@ $('#logout').addEventListener('click', async () => {
   await sb.auth.signOut(); location.reload();
 });
 
-function enterApp() {
+async function enterApp() {
   $('#login').style.display = 'none';
   $('#app').classList.add('on');
-  $('#who').textContent = user.email;
+  const { data: r } = await sb.rpc('my_role');
+  role = r || null;
+  $('#who').textContent = user.email + (role === 'editor' ? ' · محرر' : '');
+  if (!role) {
+    $('#nav').innerHTML = '';
+    $('#pTitle').textContent = 'لا توجد صلاحية';
+    $('#pSub').textContent = '';
+    $('#view').innerHTML = `<div class="tbl-wrap"><div class="empty">
+      حسابك مسجّل، لكن لم تُمنح له صلاحية بعد.<br>اطلب من مالك الحساب إضافتك من قسم «الفريق».</div></div>`;
+    return;
+  }
   buildNav();
-  go(location.hash.slice(1) || 'dash');
+  go(location.hash.slice(1) || (role === 'owner' ? 'dash' : ROLE_SECTIONS[role][0]));
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -254,7 +274,7 @@ let current = 'dash';
 const counts = {};
 
 function buildNav() {
-  $('#nav').innerHTML = Object.entries(SECTIONS).map(([k, s]) =>
+  $('#nav').innerHTML = Object.entries(SECTIONS).filter(([k]) => allowed(k)).map(([k, s]) =>
     `<button data-k="${k}">${ico(s.icon)}<span>${s.label}</span>
       <span class="count" id="c-${k}" style="display:none"></span></button>`).join('');
   $('#nav').querySelectorAll('button').forEach(b =>
@@ -264,7 +284,7 @@ function buildNav() {
 $('#menuBtn').onclick = () => $('#aside').classList.toggle('open');
 
 function go(k) {
-  if (!SECTIONS[k]) k = 'dash';
+  if (!SECTIONS[k] || !allowed(k)) k = role === 'owner' ? 'dash' : ROLE_SECTIONS[role][0];
   current = k; location.hash = k;
   const s = SECTIONS[k];
   $('#nav').querySelectorAll('button').forEach(b =>
@@ -279,6 +299,7 @@ function go(k) {
   $('#view').innerHTML = '<div class="loading"><span class="spin"></span></div>';
   if (s.custom === 'dash')      renderDash();
   else if (s.custom === 'settings') renderSettings();
+  else if (s.custom === 'team')     renderTeam();
   else                          renderList(k);
 }
 
@@ -329,7 +350,7 @@ async function renderList(k) {
         ${s.readonly
           ? `<button class="icbtn" data-a="view" title="عرض">${ico(I.eye,'')}</button>`
           : `<button class="icbtn" data-a="edit" title="تعديل">${ico(I.edit,'')}</button>`}
-        <button class="icbtn del" data-a="del" title="حذف">${ico(I.trash,'')}</button>
+        ${canDelete() ? `<button class="icbtn del" data-a="del" title="حذف">${ico(I.trash,'')}</button>` : ''}
       </div></td></tr>`).join('')}</tbody></table></div>`;
 
   $('#view').querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
@@ -652,6 +673,52 @@ async function renderDash() {
                                  : '<span class="pill off">—</span>'}</td>
       </tr>`).join('')}</tbody></table>`
       : '<div class="empty">لا توجد رسائل بعد.</div>'}</div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   الفريق (للمالك فقط)
+   ═══════════════════════════════════════════════════════════ */
+const ROLE_NAMES = { owner: 'مالك — كل الصلاحيات', editor: 'محرر — إضافة المشاريع وتعديلها' };
+
+async function renderTeam() {
+  const { data, error } = await sb.from('team').select('*').order('created_at');
+  if (error) { $('#view').innerHTML = `<div class="empty">تعذّر الجلب: ${esc(error.message)}</div>`; return; }
+  $('#view').innerHTML = `
+    <div class="tbl-wrap" style="padding:20px;margin-bottom:18px">
+      <h3 style="font-size:15px;margin-bottom:6px">إضافة شخص</h3>
+      <p class="sub" style="margin-bottom:14px">أنشئ حسابه أولاً من Supabase: Authentication ← Users ← Add user ← Send invitation، ثم اكتب بريده هنا واختر صلاحيته.</p>
+      <div class="row c2" style="align-items:end">
+        <div class="field"><label>البريد الإلكتروني</label><input class="inp" id="tmEmail" type="email" dir="ltr"></div>
+        <div class="field"><label>الصلاحية</label><select class="inp" id="tmRole">
+          <option value="editor">${ROLE_NAMES.editor}</option>
+          <option value="owner">${ROLE_NAMES.owner}</option></select></div>
+      </div>
+      <button class="btn" id="tmAdd" style="margin-top:12px">إضافة</button>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>البريد</th><th>الصلاحية</th><th></th></tr></thead>
+      <tbody>${(data || []).map((m, i) => `<tr data-i="${i}">
+        <td dir="ltr" style="text-align:right">${esc(m.email)}</td>
+        <td>${esc(ROLE_NAMES[m.role] || m.role)}</td>
+        <td><div class="acts">${m.user_id === user.id ? '<span class="sub">أنت</span>'
+          : `<button class="icbtn del" data-x="${i}" title="إزالة الصلاحية">${ico(I.trash,'')}</button>`}</div></td>
+      </tr>`).join('')}</tbody></table></div>`;
+
+  $('#tmAdd').onclick = async () => {
+    const email = $('#tmEmail').value.trim();
+    if (!email) return toast('اكتب البريد الإلكتروني.', 'bad');
+    const { data: res, error } = await sb.rpc('team_add', { p_email: email, p_role: $('#tmRole').value });
+    if (error) return toast('تعذّرت الإضافة: ' + error.message, 'bad');
+    if (res === 'no_user') return toast('لا يوجد حساب بهذا البريد. أنشئه من Supabase أولاً.', 'bad');
+    toast('تمت الإضافة'); renderTeam();
+  };
+  $('#view').querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+    const m = data[+b.dataset.x];
+    if (!confirm(`إزالة صلاحية ${m.email} من لوحة التحكم؟\nيبقى حسابه موجوداً لكنه لن يرى شيئاً.`)) return;
+    const { error } = await sb.from('team').delete().eq('user_id', m.user_id);
+    if (error) return toast('تعذّرت الإزالة: ' + error.message, 'bad');
+    toast('تمت الإزالة'); renderTeam();
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════
