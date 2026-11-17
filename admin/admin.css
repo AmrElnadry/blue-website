@@ -210,3 +210,22 @@ td .nothumb{width:62px;height:40px;border-radius:6px;background:var(--card3);
   margin-bottom:14px;text-decoration:none}
 .btn.visit svg{width:15px;height:15px;flex-shrink:0}
 .btn.visit:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* ── نجمة الإبراز، تنبيه الإنجليزي، اختيار اللقطة ── */
+.fstar{color:#f5b82e;margin-inline-end:6px;font-size:15px;text-shadow:0 0 10px rgba(245,184,46,.35)}
+.enwarn{background:rgba(224,165,47,.1);border:1px solid rgba(224,165,47,.35);color:#f3cf86;border-radius:10px;
+  padding:12px 14px;margin-bottom:18px;font-size:13px;line-height:1.8}
+.enwarn b{color:#ffd88a}
+.enwarn .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.inp.need{border-color:var(--warn);box-shadow:0 0 0 3px rgba(224,165,47,.18)}
+.framesbtn{margin-top:10px}
+.frames{display:none;margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card3)}
+.frames.on{display:block}
+.fplayer{aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#000}
+.fplayer iframe{width:100%;height:100%;border:0;display:block}
+.fbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap}
+.fhint{font-size:12.5px;color:var(--dim);line-height:1.7}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.fgrid button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:none;cursor:pointer}
+.fgrid button:hover{border-color:var(--accent)}
+.fgrid img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}

@@ -762,6 +762,7 @@ function setProjects(rows){
       sar:r.summary_ar||'', sen:r.summary_en||r.summary_ar||'',
       img:relImg(r.cover_url)||'assets/og.jpg'
     }, videoRef(r.video_url));
+    if(r.featured) p.featured=true;
     if(r.body_ar){ p.brief_ar=r.body_ar; p.brief_en=r.body_en||''; }
     if(Array.isArray(r.credits) && r.credits.length) p.credits=r.credits;
     return p;
@@ -797,7 +798,7 @@ const BLUE_DATA=(async()=>{
   const get=q=>fetch(`${U}/rest/v1/${q}`,{headers:h}).then(r=>r.ok?r.json():null).catch(()=>null);
   const res=await Promise.race([
     Promise.all([
-      get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,client_en,cover_url,video_url,summary_ar,summary_en,body_ar,body_en,credits,duration,ratio,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
+      get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,client_en,cover_url,video_url,summary_ar,summary_en,body_ar,body_en,credits,duration,ratio,featured,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
       get('posts?published=eq.true&select=slug,title_ar,title_en,excerpt_ar,excerpt_en,cover_url,tag_ar,tag_en,read_minutes,published_at,created_at&order=published_at.desc')
     ]),
     new Promise(r=>setTimeout(()=>r(null),2500))

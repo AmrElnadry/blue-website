@@ -56,32 +56,29 @@ const SECTIONS = {
         ? `<img class="thumb" src="${esc(r.cover_url)}" loading="lazy">`
         : `<div class="nothumb">▣</div>`},
       {h:'المشروع', render:r =>
-        `<div class="ttl">${esc(r.title_ar)}</div><div class="sub">${esc(r.title_en)}</div>`},
+        `<div class="ttl">${r.featured ? '<span class="fstar" title="يظهر في الصفحة الرئيسية">★</span>' : ''}${esc(r.title_ar)}</div><div class="sub">${esc(r.title_en)}</div>`},
       {h:'التصنيف', render:r => esc(r._cat || '—')},
       {h:'السنة', render:r => r.year || '—'},
       {h:'الحالة', render:r =>
-        (r.published ? '<span class="pill on">منشور</span>' : '<span class="pill off">مخفي</span>') +
-        (r.featured ? ' <span class="pill star">مُبرز</span>' : '')}
+        (r.published ? '<span class="pill on">منشور</span>' : '<span class="pill off">مخفي</span>')}
     ],
     fields:[
       {n:'title', t:'text', i18n:true, label:'عنوان المشروع', req:true},
-      {n:'slug',  t:'slug', label:'المعرّف في الرابط', from:'title_en',
-       hint:'يظهر في رابط الصفحة. حروف إنجليزية صغيرة وشرطات فقط.', req:true},
+      {n:'slug',  t:'slug', from:'title_en', auto:true},
       {g:[{n:'category_id', t:'ref', ref:'categories', label:'التصنيف'},
           {n:'year', t:'number', label:'السنة', ph:'2025'},
-          {n:'client', t:'text', label:'العميل'}]},
-      {n:'client_en', t:'text', label:'اسم العميل بالإنجليزي', dir:'ltr',
-       hint:'يظهر في النسخة الإنجليزية من الموقع. إذا تُرك فارغاً يظهر الاسم العربي.'},
-      {n:'cover_url', t:'image', label:'صورة الغلاف',
-       hint:'يُفضّل مقاس عريض 16:9 بعرض 1600 بكسل على الأقل.'},
+          {n:'client', t:'text', i18n:true, keys:{ar:'client', en:'client_en'}, label:'اسم العميل'}]},
       {n:'video_url', t:'text', label:'رابط الفيديو', dir:'ltr',
        ph:'https://vimeo.com/… أو https://youtube.com/…'},
+      {n:'cover_url', t:'image', label:'صورة الغلاف', frames:'video_url',
+       hint:'يُفضّل مقاس عريض 16:9 بعرض 1600 بكسل على الأقل.'},
       {n:'summary', t:'textarea', i18n:true, label:'وصف مختصر',
        hint:'سطر أو سطران يظهران في بطاقة المشروع.'},
       {n:'body', t:'textarea', i18n:true, label:'تفاصيل المشروع', rows:7},
       {n:'gallery', t:'gallery', label:'معرض الصور'},
       {g:[{n:'published', t:'bool', label:'منشور على الموقع', def:true},
-          {n:'featured',  t:'bool', label:'إبراز في الصفحة الرئيسية'},
+          {n:'featured',  t:'bool', label:'★ إبراز في الصفحة الرئيسية',
+           hint:'المشاريع المُبرزة تظهر أولاً في الصفحة الرئيسية.'},
           {n:'sort', t:'number', label:'ترتيب العرض', def:0,
            hint:'الأصغر يظهر أولاً.'}]}
     ]
@@ -134,7 +131,7 @@ const SECTIONS = {
     ],
     fields:[
       {n:'title', t:'text', i18n:true, label:'اسم الخدمة', req:true},
-      {n:'slug', t:'slug', from:'title_en', label:'المعرّف في الرابط', req:true},
+      {n:'slug', t:'slug', from:'title_en', auto:true},
       {n:'phase_id', t:'ref', ref:'service_phases', label:'المرحلة'},
       {n:'desc', t:'textarea', i18n:true, label:'وصف مختصر'},
       {n:'body', t:'textarea', i18n:true, label:'تفاصيل الخدمة', rows:7},
@@ -162,7 +159,7 @@ const SECTIONS = {
     ],
     fields:[
       {n:'title', t:'text', i18n:true, label:'عنوان المقال', req:true},
-      {n:'slug', t:'slug', from:'title_en', label:'المعرّف في الرابط', req:true},
+      {n:'slug', t:'slug', from:'title_en', auto:true},
       {n:'cover_url', t:'image', label:'صورة المقال'},
       {n:'excerpt', t:'textarea', i18n:true, label:'مقتطف'},
       {n:'body', t:'textarea', i18n:true, label:'نص المقال', rows:12},
@@ -443,9 +440,13 @@ let formState = {};
 function flat(fields) {
   return fields.flatMap(f => f.g ? f.g : [f]);
 }
+/* اسم العمود في قاعدة البيانات لكل لغة (keys يسمح بأسماء مخصّصة مثل client / client_en) */
+const keyOf  = (f, lang) => f.keys ? f.keys[lang] : f.i18n ? `${f.n}_${lang}` : f.n;
+const keysOf = f => f.i18n ? [keyOf(f, 'ar'), keyOf(f, 'en')] : [f.n];
 
 function fieldHTML(f, v, lang) {
-  const name = f.i18n ? `${f.n}_${lang}` : f.n;
+  if (f.auto) return '';
+  const name = keyOf(f, lang);
   const val  = v[name];
   const dir  = f.dir || (f.i18n && lang === 'en' ? 'ltr' : (f.t === 'slug' ? 'ltr' : 'rtl'));
   const lbl  = `<label>${f.label}${f.req ? ' <span class="req">*</span>' : ''}</label>`;
@@ -471,7 +472,9 @@ function fieldHTML(f, v, lang) {
           `<option value="${o.id}" ${o.id === val ? 'selected' : ''}>${esc(o.name_ar)}</option>`).join('')}
         </select>${hint}</div>`;
     case 'image':
-      return `<div class="field">${lbl}<div data-img="${name}">${imgBox(name, val)}</div>${hint}</div>`;
+      return `<div class="field">${lbl}<div data-img="${name}">${imgBox(name, val)}</div>${f.frames ? `
+        <button type="button" class="btn ghost sm framesbtn" data-frames="${name}" data-src="${f.frames}">🎞 اختيار لقطة من الفيديو</button>
+        <div class="frames" data-framesbox="${name}"></div>` : ''}${hint}</div>`;
     case 'gallery':
       return `<div class="field">${lbl}<div data-gal="${name}">${galBox(name, val || [])}</div>${hint}</div>`;
     default:
@@ -523,8 +526,9 @@ async function openForm(k, row) {
 /* يرسم مجموعة أو حقلاً مفرداً، ويُخفي الحقول غير المتعلقة باللغة في لسان english */
 function grp(f, v, lang) {
   if (f.g) {
-    const inner = f.g.map(x => fieldHTML(x, v, lang)).join('');
-    return lang === 'en' && !f.g.some(x => x.i18n) ? '' : `<div class="row c${f.g.length}">${inner}</div>`;
+    const items = lang === 'en' ? f.g.filter(x => x.i18n) : f.g;
+    if (!items.length) return '';
+    return `<div class="row c${items.length}">${items.map(x => fieldHTML(x, v, lang)).join('')}</div>`;
   }
   if (lang === 'en' && !f.i18n) return '';
   return fieldHTML(f, v, lang);
@@ -576,6 +580,8 @@ function wire(k) {
       handleFiles(name, [...e.dataTransfer.files], multi, d, k); };
   });
 
+  wireFrames(k);
+
   M.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => {
     const n = b.dataset.rm; formState[n] = null;
     b.closest(`[data-img="${n}"]`).innerHTML = imgBox(n, null); wire(k);
@@ -615,12 +621,12 @@ async function handleFiles(name, files, multi, drop, k) {
 const slugify = s => String(s || '').toLowerCase().trim()
   .replace(/[^a-z0-9؀-ۿ\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 60);
 
-async function save(k, row) {
+async function save(k, row, skipEn = false) {
   const s = SECTIONS[k], btn = $('#mSave');
+  $('#enWarn')?.remove();
   const payload = {};
   flat(s.fields).forEach(f => {
-    const keys = f.i18n ? [`${f.n}_ar`, `${f.n}_en`] : [f.n];
-    keys.forEach(key => {
+    keysOf(f).forEach(key => {
       let v = formState[key];
       if (f.t === 'bool')   v = !!v;
       if (f.t === 'number' && v === '') v = null;
@@ -630,12 +636,35 @@ async function save(k, row) {
     });
   });
 
-  // تحقّق
-  for (const f of flat(s.fields)) {
-    const keys = f.i18n ? [`${f.n}_ar`, `${f.n}_en`] : [f.n];
-    for (const key of keys)
-      if (f.req && !String(payload[key] ?? '').trim())
-        return toast(`الحقل «${f.label}» مطلوب.`, 'bad');
+  // تحقّق: الحقول المطلوبة
+  const filled = key => String(payload[key] ?? '').trim() !== '';
+  for (const f of flat(s.fields).filter(f => f.req && !f.auto)) {
+    if (f.i18n && !filled(keyOf(f, 'ar'))) { showLang('ar', keyOf(f, 'ar')); return toast(`برجاء كتابة «${f.label}» بالعربية.`, 'bad'); }
+    if (f.i18n && !filled(keyOf(f, 'en'))) { showLang('en', keyOf(f, 'en')); return toast(`برجاء كتابة «${f.label}» بالإنجليزية.`, 'bad'); }
+    if (!f.i18n && !filled(f.n)) return toast(`الحقل «${f.label}» مطلوب.`, 'bad');
+  }
+  // تنبيه: حقول مكتوبة بالعربي وناقصة بالإنجليزي
+  const missing = flat(s.fields).filter(f => f.i18n && !f.req && filled(keyOf(f, 'ar')) && !filled(keyOf(f, 'en')));
+  if (missing.length && !skipEn) {
+    const names = missing.map(f => `«${f.label}»`).join('، ');
+    $('#mBody').insertAdjacentHTML('afterbegin', `<div class="enwarn" id="enWarn">
+      <b>ناقص بالإنجليزية:</b> برجاء كتابة ${names} بالإنجليزية في تبويب English، حتى تظهر في النسخة الإنجليزية من الموقع.
+      <div class="acts"><button type="button" class="btn sm" id="enGo">إكمال بالإنجليزية</button>
+      <button type="button" class="btn ghost sm" id="enSkip">حفظ بدون الإنجليزية</button></div></div>`);
+    $('#enWarn').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    $('#enGo').onclick = () => { $('#enWarn').remove(); showLang('en', keyOf(missing[0], 'en')); };
+    $('#enSkip').onclick = () => save(k, row, true);
+    return;
+  }
+  // المعرّف في الرابط: يُولَّد من العنوان الإنجليزي عند الإضافة، ويبقى ثابتاً بعدها حتى لا تتعطّل الروابط
+  for (const f of flat(s.fields).filter(f => f.auto)) {
+    if (filled(f.n)) continue;
+    const base = slugify(payload[f.from]) || slugify(payload[f.from.replace(/_en$/, '_ar')]) || `item-${Date.now().toString(36)}`;
+    const { data: taken } = await sb.from(s.table).select(f.n).like(f.n, `${base}%`);
+    const used = new Set((taken || []).map(r => r[f.n]));
+    let slug = base, i = 2;
+    while (used.has(slug)) slug = `${base}-${i++}`;
+    payload[f.n] = slug;
   }
 
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
@@ -652,6 +681,84 @@ async function save(k, row) {
   toast(row ? 'تم حفظ التعديلات' : 'تمت الإضافة');
   delete cache[s.table];
   closeModal(); renderList(k);
+}
+
+/* ينقل إلى لسان اللغة ويحدّد الحقل المطلوب */
+function showLang(lang, key) {
+  const M = $('#mBody');
+  M.querySelector(`.lang-tabs button[data-l="${lang}"]`)?.click();
+  const el = M.querySelector(`[data-f="${key}"]`);
+  if (el) { el.classList.add('need'); el.focus(); el.addEventListener('input', () => el.classList.remove('need'), { once: true }); }
+}
+
+/* ─────────── اختيار غلاف من لقطات الفيديو ─────────── */
+let vimeoApi;
+const loadVimeoApi = () => vimeoApi ||= new Promise((ok, no) => {
+  const sc = document.createElement('script');
+  sc.src = 'https://player.vimeo.com/api/player.js'; sc.onload = ok; sc.onerror = no;
+  document.head.appendChild(sc);
+});
+function wireFrames(k) {
+  $('#mBody').querySelectorAll('[data-frames]').forEach(b => b.onclick = async () => {
+    const name = b.dataset.frames, box = $('#mBody').querySelector(`[data-framesbox="${name}"]`);
+    if (box.classList.contains('on')) { box.classList.remove('on'); box.innerHTML = ''; return; }
+    const u = String(formState[b.dataset.src] || '').trim();
+    const ref = videoRefA(u);
+    const setCover = url => {
+      formState[name] = url;
+      $('#mBody').querySelector(`[data-img="${name}"]`).innerHTML = imgBox(name, url);
+      box.classList.remove('on'); box.innerHTML = ''; wire(k); toast('تم اختيار صورة الغلاف');
+    };
+    box.classList.add('on');
+    if (!u) { box.innerHTML = '<div class="fhint">أضف «رابط الفيديو» أولاً، ثم اختر اللقطة.</div>'; return; }
+
+    if (ref.vid) {
+      box.innerHTML = `<div class="fplayer"><iframe src="https://player.vimeo.com/video/${ref.vid}?dnt=1&title=0&byline=0&portrait=0&muted=1"
+          allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+        <div class="fbar"><span class="fhint">شغّل الفيديو وأوقفه عند اللقطة المناسبة، ثم اضغط الزر.</span>
+        <button type="button" class="btn sm" data-grab>استخدم هذه اللقطة</button></div>`;
+      await loadVimeoApi();
+      const player = new Vimeo.Player(box.querySelector('iframe'));
+      box.querySelector('[data-grab]').onclick = async e => {
+        const g = e.currentTarget; g.disabled = true; g.innerHTML = '<span class="spin"></span> جاري تجهيز الصورة…';
+        try {
+          await player.pause().catch(() => {});
+          const time = await player.getCurrentTime();
+          const { data, error } = await sb.functions.invoke('vimeo-frame', { body: { video_url: u, time } });
+          let code = data && data.error;
+          if (error) { try { code = (await error.context.json()).error; } catch { code = 'net'; } }
+          if (code || !data?.url) throw new Error(({
+            no_token: 'لم يُضبط رمز Vimeo في الإعدادات بعد.',
+            bad_token: 'رمز Vimeo غير صالح. أنشئ رمزاً جديداً.',
+            no_access: 'هذا الفيديو ليس على حساب Blue في Vimeo، أو الرمز بدون صلاحية Edit.',
+            not_allowed: 'حسابك لا يملك صلاحية المشاريع.',
+            not_ready: 'Vimeo لم يجهّز الصورة بعد. حاول مرة أخرى بعد ثوانٍ.'
+          })[code] || 'تعذّر جلب اللقطة. حاول مرة أخرى.');
+          setCover(data.url);
+        } catch (err) { toast(err.message, 'bad'); g.disabled = false; g.textContent = 'استخدم هذه اللقطة'; }
+      };
+    } else if (ref.yt) {
+      const shots = ['maxresdefault', 'maxres1', 'maxres2', 'maxres3'].map(n => `https://i.ytimg.com/vi/${ref.yt}/${n}.jpg`);
+      box.innerHTML = `<div class="fhint">اختر لقطة (يوتيوب يوفّر 4 لقطات من بداية الفيديو ومنتصفه):</div>
+        <div class="fgrid">${shots.map(x => `<button type="button" data-pick="${x}"><img src="${x}"
+          onerror="this.src=this.src.replace(/maxres(default|\d)/,m=>m==='maxresdefault'?'hqdefault':'hq'+m.slice(-1))"></button>`).join('')}</div>`;
+      box.querySelectorAll('[data-pick]').forEach(x => x.onclick = () => setCover(x.querySelector('img').src));
+    } else if (ref.gd) {
+      const x = `https://drive.google.com/thumbnail?id=${ref.gd}&sz=w1920`;
+      box.innerHTML = `<div class="fhint">جوجل درايف يوفّر لقطة واحدة فقط:</div>
+        <div class="fgrid"><button type="button" data-pick><img src="${x}"></button></div>`;
+      box.querySelector('[data-pick]').onclick = () => setCover(x);
+    } else {
+      box.innerHTML = '<div class="fhint">الرابط غير مدعوم. استخدم رابط Vimeo أو YouTube أو Google Drive.</div>';
+    }
+  });
+}
+function videoRefA(u) {
+  let m;
+  if ((m = u.match(/vimeo\.com\/(?:video\/|channels\/[\w-]+\/)?(\d+)/))) return { vid: m[1] };
+  if ((m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return { gd: m[1] };
+  if ((m = u.match(/(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/))) return { yt: m[1] };
+  return {};
 }
 
 function closeModal() {

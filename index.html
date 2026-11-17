@@ -139,7 +139,8 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
 })();
 whenReady(()=>{
   const mos=document.getElementById('mosaic');
-  mos.innerHTML = PROJECTS.slice(0,7).map(p=>tile(p)).join('');
+  /* المشاريع المُبرزة من لوحة التحكم (★) أولاً، ثم الباقي بترتيبه */
+  mos.innerHTML = [...PROJECTS.filter(p=>p.featured), ...PROJECTS.filter(p=>!p.featured)].slice(0,7).map(p=>tile(p)).join('');
   layMosaic(mos);
 
   document.getElementById('posts').innerHTML = ARTICLES.slice(0,3).map(a=>postCard(a)).join('');
