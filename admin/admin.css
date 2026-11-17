@@ -212,7 +212,8 @@ td .nothumb{width:62px;height:40px;border-radius:6px;background:var(--card3);
 .btn.visit:hover{border-color:var(--accent);color:var(--accent2)}
 
 /* ── نجمة الإبراز، تنبيه الإنجليزي، اختيار اللقطة ── */
-.fstar{color:#f5b82e;margin-inline-end:6px;font-size:15px;text-shadow:0 0 10px rgba(245,184,46,.35)}
+.fstar{display:inline-flex;vertical-align:middle;margin-inline-start:4px}
+.fstar svg{width:17px;height:17px;fill:#f5b82e}
 .enwarn{background:rgba(224,165,47,.1);border:1px solid rgba(224,165,47,.35);color:#f3cf86;border-radius:10px;
   padding:12px 14px;margin-bottom:18px;font-size:13px;line-height:1.8}
 .enwarn b{color:#ffd88a}

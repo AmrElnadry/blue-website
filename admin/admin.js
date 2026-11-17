@@ -56,11 +56,12 @@ const SECTIONS = {
         ? `<img class="thumb" src="${esc(r.cover_url)}" loading="lazy">`
         : `<div class="nothumb">▣</div>`},
       {h:'المشروع', render:r =>
-        `<div class="ttl">${r.featured ? '<span class="fstar" title="يظهر في الصفحة الرئيسية">★</span>' : ''}${esc(r.title_ar)}</div><div class="sub">${esc(r.title_en)}</div>`},
+        `<div class="ttl">${esc(r.title_ar)}</div><div class="sub">${esc(r.title_en)}</div>`},
       {h:'التصنيف', render:r => esc(r._cat || '—')},
       {h:'السنة', render:r => r.year || '—'},
       {h:'الحالة', render:r =>
-        (r.published ? '<span class="pill on">منشور</span>' : '<span class="pill off">مخفي</span>')}
+        (r.published ? '<span class="pill on">منشور</span>' : '<span class="pill off">مخفي</span>') +
+        (r.featured ? ' <span class="fstar" title="مُبرز في الصفحة الرئيسية" aria-label="مُبرز"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></span>' : '')}
     ],
     fields:[
       {n:'title', t:'text', i18n:true, label:'عنوان المشروع', req:true},
