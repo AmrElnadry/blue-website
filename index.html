@@ -51,6 +51,9 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
 .hero .sub{margin-top:30px;max-width:48ch;color:#cdcdd1;font-size:16px;line-height:1.9;opacity:0;
   animation:fade 1s var(--ease) .55s forwards}
 .hero .row{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fade 1s var(--ease) .75s forwards}
+.hero .reelbtn{margin-inline-start:auto}
+.hero .reelbtn svg{width:15px;height:15px;flex:none}
+@media(max-width:760px){.hero .reelbtn{margin-inline-start:0}}
 .scrollhint{position:absolute;bottom:72px;inset-inline-start:var(--pad);z-index:5;display:flex;align-items:center;
   gap:12px;font-size:10px;letter-spacing:.28em;color:var(--dim)}
 .scrollhint span{width:1px;height:46px;background:linear-gradient(var(--dim),transparent);animation:drop 2s infinite}
@@ -79,6 +82,7 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
     <div class="row">
       <a href="portfolio.html" class="btn fill" data-ar="شاهد أعمالنا" data-en="Our Work">شاهد أعمالنا</a>
       <a href="contact.html" class="btn" data-ar="تواصل معنا" data-en="Get in touch">تواصل معنا</a>
+      <a href="reel.html" class="btn reelbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span data-ar="مشاهدة الشوريل" data-en="Watch showreel">مشاهدة الشوريل</span></a>
     </div>
   </div>
   <div class="scrollhint"><span></span><em style="font-style:normal" data-ar="مرّر" data-en="SCROLL">مرّر</em></div>

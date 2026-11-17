@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>الشوريل — Blue</title>
+<meta name="description" content="شوريل Blue Production House 2026 — نصنع الصورة التي تُحكى">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta property="og:site_name" content="Blue Production House">
+<meta property="og:type" content="video.other">
+<meta property="og:locale" content="ar_SA">
+<meta property="og:title" content="شوريل Blue 2026">
+<meta property="og:description" content="نصنع الصورة التي تُحكى">
+<meta property="og:url" content="https://blue-network.sa/reel.html">
+<meta property="og:image" content="https://blue-network.sa/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Blue — نصنع الصورة التي تُحكى">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blue-network.sa/assets/og.jpg">
+<link rel="preconnect" href="https://player.vimeo.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--fg:#f2f2f0;--dim:#8a8a8f}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#000;color:var(--fg)}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;overflow:hidden}
+html[lang="en"] body{font-family:'Archivo',system-ui,sans-serif}
+.bar{position:fixed;inset:0 0 auto;z-index:2;display:flex;align-items:center;justify-content:space-between;
+  padding:max(18px,env(safe-area-inset-top)) clamp(16px,3vw,36px) 18px;
+  background:linear-gradient(#000c,#0000);transition:opacity .4s}
+.bar img{height:30px;display:block}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--fg);text-decoration:none;font-size:14px;
+  border:1px solid rgba(255,255,255,.28);border-radius:60px;padding:9px 18px;transition:background .2s,color .2s}
+.back:hover,.back:focus-visible{background:var(--fg);color:#000;outline:none}
+.back svg{width:16px;height:16px}
+html[dir="rtl"] .back svg{transform:scaleX(-1)}
+.stage{position:fixed;inset:0;display:grid;place-items:center;padding:72px clamp(0px,3vw,36px) 24px}
+.frame{width:min(100%,calc((100svh - 96px) * 16 / 9));aspect-ratio:16/9;background:#000}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+body.idle .bar{opacity:0}
+@media(max-width:760px){.stage{padding-inline:0}.bar img{height:26px}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a href="index.html" aria-label="Blue"><img src="assets/logo-full.svg" alt="Blue"></a>
+  <a class="back" id="back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    <span data-ar="رجوع" data-en="Back">رجوع</span>
+  </a>
+</header>
+
+<main class="stage">
+  <div class="frame">
+    <iframe id="reel" src="https://player.vimeo.com/video/1247645306?dnt=1&title=0&byline=0&portrait=0&color=2f8fe0&playsinline=1"
+      allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen
+      title="BLUE SHOWREEL 2026"></iframe>
+  </div>
+</main>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+(function(){
+  /* اللغة نفسها المختارة في باقي الموقع */
+  let ar=true; try{ ar = localStorage.getItem('bph_lang')!=='en'; }catch(e){}
+  document.documentElement.lang = ar?'ar':'en';
+  document.documentElement.dir  = ar?'rtl':'ltr';
+  document.querySelectorAll('[data-ar]').forEach(el=>el.textContent = ar?el.dataset.ar:el.dataset.en);
+  document.title = ar ? 'الشوريل — Blue' : 'Showreel — Blue';
+
+  /* رجوع: للصفحة السابقة إن كانت من الموقع، وإلا للرئيسية */
+  const back=document.getElementById('back');
+  back.addEventListener('click',e=>{
+    if(document.referrer && new URL(document.referrer).origin===location.origin && history.length>1){
+      e.preventDefault(); history.back();
+    }
+  });
+  addEventListener('keydown',e=>{ if(e.key==='Escape') back.click(); });
+
+  /* التشغيل بالصوت مباشرة. لو منعه المتصفح يظهر زر التشغيل في المشغّل، وضغطة واحدة تشغّله بالصوت */
+  if(window.Vimeo){
+    const player=new Vimeo.Player(document.getElementById('reel'));
+    player.ready().then(()=>player.setVolume(1)).then(()=>player.play()).catch(()=>{});
+    /* إخفاء الشريط العلوي أثناء التشغيل وإظهاره عند تحريك الماوس */
+    let t; const wake=()=>{ document.body.classList.remove('idle'); clearTimeout(t);
+      t=setTimeout(()=>player.getPaused().then(p=>{ if(!p) document.body.classList.add('idle'); }),2500); };
+    player.on('play',wake); player.on('pause',()=>{ clearTimeout(t); document.body.classList.remove('idle'); });
+    ['mousemove','touchstart','keydown'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
+  }
+})();
+</script>
+</body>
+</html>
