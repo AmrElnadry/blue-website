@@ -277,7 +277,7 @@ $('#forgot').addEventListener('click', async () => {
   err.classList.remove('on'); document.querySelector('.okmsg')?.remove();
   if (!email) { err.textContent = 'اكتب بريدك الإلكتروني أولاً ثم اضغط «نسيت كلمة المرور؟».'; err.classList.add('on'); $('#email').focus(); return; }
   const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/admin/' });
-  if (error) { err.textContent = /rate|seconds/i.test(error.message) ? 'انتظر دقيقة ثم حاول مرة أخرى.' : error.message; err.classList.add('on'); return; }
+  if (error) { err.textContent = /seconds/i.test(error.message) ? 'انتظر دقيقة ثم حاول مرة أخرى.' : /rate/i.test(error.message) ? 'وصلنا للحد الأقصى من رسائل البريد في الساعة. حاول مرة أخرى بعد ساعة.' : error.message; err.classList.add('on'); return; }
   err.insertAdjacentHTML('afterend', '<div class="okmsg">لو البريد مسجّل عندنا، سيصلك رابط لاختيار كلمة مرور جديدة خلال دقائق.</div>');
 });
 
