@@ -211,11 +211,13 @@ const SECTIONS = {
     desc:'من يدخل لوحة التحكم وصلاحية كل شخص' }
 };
 
-/* الصلاحيات: المالك يرى كل شيء، والمحرر يرى المشاريع فقط (إضافة وتعديل بدون حذف).
-   الحماية الفعلية في قاعدة البيانات (supabase/roles.sql)؛ هنا نخفي ما لا يخصّه فقط. */
-let role = null;
-const ROLE_SECTIONS = { editor: ['projects'] };
-const allowed = k => role === 'owner' || (ROLE_SECTIONS[role] || []).includes(k);
+/* الصلاحيات: المالك يرى كل شيء. المحرر يرى الأقسام التي في perms فقط
+   (projects و/أو posts) ويضيف ويعدّل بدون حذف.
+   الحماية الفعلية في قاعدة البيانات (supabase/roles.sql و permissions.sql)؛ هنا نخفي ما لا يخصّه فقط. */
+let role = null, perms = [];
+const PERM_NAMES = { projects: 'إضافة المشاريع وتعديلها', posts: 'إضافة مقالات المدونة وتعديلها' };
+const allowed = k => role === 'owner' || perms.includes(k);
+const firstSection = () => role === 'owner' ? 'dash' : perms[0];
 const canDelete = () => role === 'owner';
 
 /* ═══════════════════════════════════════════════════════════
@@ -252,10 +254,10 @@ $('#logout').addEventListener('click', async () => {
 async function enterApp() {
   $('#login').style.display = 'none';
   $('#app').classList.add('on');
-  const { data: r } = await sb.rpc('my_role');
-  role = r || null;
+  const { data: me } = await sb.from('team').select('role,perms').eq('user_id', user.id).maybeSingle();
+  role = me ? me.role : null; perms = (me && me.perms) || [];
   $('#who').textContent = user.email + (role === 'editor' ? ' · محرر' : '');
-  if (!role) {
+  if (!role || (role === 'editor' && !perms.length)) {
     $('#nav').innerHTML = '';
     $('#pTitle').textContent = 'لا توجد صلاحية';
     $('#pSub').textContent = '';
@@ -264,7 +266,7 @@ async function enterApp() {
     return;
   }
   buildNav();
-  go(location.hash.slice(1) || (role === 'owner' ? 'dash' : ROLE_SECTIONS[role][0]));
+  go(location.hash.slice(1) || firstSection());
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -284,7 +286,7 @@ function buildNav() {
 $('#menuBtn').onclick = () => $('#aside').classList.toggle('open');
 
 function go(k) {
-  if (!SECTIONS[k] || !allowed(k)) k = role === 'owner' ? 'dash' : ROLE_SECTIONS[role][0];
+  if (!SECTIONS[k] || !allowed(k)) k = firstSection();
   current = k; location.hash = k;
   const s = SECTIONS[k];
   $('#nav').querySelectorAll('button').forEach(b =>
@@ -678,43 +680,80 @@ async function renderDash() {
 /* ═══════════════════════════════════════════════════════════
    الفريق (للمالك فقط)
    ═══════════════════════════════════════════════════════════ */
-const ROLE_NAMES = { owner: 'مالك — كل الصلاحيات', editor: 'محرر — إضافة المشاريع وتعديلها' };
+const accessLabel = m => m.role === 'owner' ? 'صلاحيات كاملة'
+  : (m.perms || []).map(p => PERM_NAMES[p] || p).join('، ') || 'بدون صلاحية';
 
 async function renderTeam() {
   const { data, error } = await sb.from('team').select('*').order('created_at');
   if (error) { $('#view').innerHTML = `<div class="empty">تعذّر الجلب: ${esc(error.message)}</div>`; return; }
+  const opt = (v, l, d) => `<label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;cursor:pointer">
+      <input type="${v === 'full' ? 'radio' : 'checkbox'}" ${v === 'full' ? 'name="tmFull"' : ''} value="${v}" data-p="${v}" style="margin-top:4px">
+      <span><b style="font-weight:600">${l}</b><br><span class="sub">${d}</span></span></label>`;
   $('#view').innerHTML = `
     <div class="tbl-wrap" style="padding:20px;margin-bottom:18px">
-      <h3 style="font-size:15px;margin-bottom:6px">إضافة شخص</h3>
-      <p class="sub" style="margin-bottom:14px">أنشئ حسابه أولاً من Supabase: Authentication ← Users ← Add user ← Send invitation، ثم اكتب بريده هنا واختر صلاحيته.</p>
-      <div class="row c2" style="align-items:end">
-        <div class="field"><label>البريد الإلكتروني</label><input class="inp" id="tmEmail" type="email" dir="ltr"></div>
-        <div class="field"><label>الصلاحية</label><select class="inp" id="tmRole">
-          <option value="editor">${ROLE_NAMES.editor}</option>
-          <option value="owner">${ROLE_NAMES.owner}</option></select></div>
+      <h3 style="font-size:15px;margin-bottom:6px" id="tmHead">إضافة شخص</h3>
+      <p class="sub" style="margin-bottom:14px">أنشئ حسابه أولاً من Supabase: Authentication ← Users ← Add user ← Send invitation، ثم اكتب بريده هنا واختر صلاحياته.</p>
+      <div class="field"><label>البريد الإلكتروني</label><input class="inp" id="tmEmail" type="email" dir="ltr"></div>
+      <div class="field"><label>الصلاحيات</label>
+        ${opt('full', 'صلاحيات كاملة', 'كل أقسام لوحة التحكم، بما فيها الحذف والرسائل والإعدادات والفريق')}
+        <div style="border-top:1px solid rgba(255,255,255,.08);margin:4px 0"></div>
+        ${opt('projects', PERM_NAMES.projects, 'يرى قسم المشاريع فقط، ويضيف ويعدّل بدون حذف')}
+        ${opt('posts', PERM_NAMES.posts, 'يرى قسم المدونة فقط، ويضيف ويعدّل بدون حذف')}
+        <p class="sub">يمكن اختيار المشاريع وحدها، أو المدونة وحدها، أو الاثنتين معاً.</p>
       </div>
-      <button class="btn" id="tmAdd" style="margin-top:12px">إضافة</button>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" id="tmAdd">إضافة</button>
+        <button class="btn ghost" id="tmReset" style="display:none">إلغاء التعديل</button>
+      </div>
     </div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>البريد</th><th>الصلاحية</th><th></th></tr></thead>
-      <tbody>${(data || []).map((m, i) => `<tr data-i="${i}">
+      <thead><tr><th>البريد</th><th>الصلاحيات</th><th></th></tr></thead>
+      <tbody>${(data || []).map((m, i) => `<tr>
         <td dir="ltr" style="text-align:right">${esc(m.email)}</td>
-        <td>${esc(ROLE_NAMES[m.role] || m.role)}</td>
-        <td><div class="acts">${m.user_id === user.id ? '<span class="sub">أنت</span>'
-          : `<button class="icbtn del" data-x="${i}" title="إزالة الصلاحية">${ico(I.trash,'')}</button>`}</div></td>
+        <td>${esc(accessLabel(m))}</td>
+        <td><div class="acts">${m.user_id === user.id ? '<span class="sub">أنت</span>' : `
+          <button class="icbtn" data-e="${i}" title="تعديل الصلاحيات">${ico(I.edit,'')}</button>
+          <button class="icbtn del" data-x="${i}" title="إزالة من الفريق">${ico(I.trash,'')}</button>`}</div></td>
       </tr>`).join('')}</tbody></table></div>`;
+
+  const V = $('#view'), box = p => V.querySelector(`[data-p="${p}"]`);
+  // «كاملة» تلغي الاختيارات الجزئية والعكس
+  box('full').onchange = () => { if (box('full').checked) { box('projects').checked = box('posts').checked = false; } };
+  ['projects','posts'].forEach(p => box(p).onchange = () => { if (box(p).checked) box('full').checked = false; });
+
+  const reset = () => {
+    $('#tmEmail').value = ''; $('#tmEmail').disabled = false;
+    ['full','projects','posts'].forEach(p => box(p).checked = false);
+    $('#tmHead').textContent = 'إضافة شخص'; $('#tmAdd').textContent = 'إضافة'; $('#tmReset').style.display = 'none';
+  };
+  $('#tmReset').onclick = reset;
 
   $('#tmAdd').onclick = async () => {
     const email = $('#tmEmail').value.trim();
     if (!email) return toast('اكتب البريد الإلكتروني.', 'bad');
-    const { data: res, error } = await sb.rpc('team_add', { p_email: email, p_role: $('#tmRole').value });
-    if (error) return toast('تعذّرت الإضافة: ' + error.message, 'bad');
+    const full = box('full').checked;
+    const ps = ['projects','posts'].filter(p => box(p).checked);
+    if (!full && !ps.length) return toast('اختر صلاحية واحدة على الأقل.', 'bad');
+    const { data: res, error } = await sb.rpc('team_add',
+      { p_email: email, p_role: full ? 'owner' : 'editor', p_perms: ps });
+    if (error) return toast('تعذّر الحفظ: ' + error.message, 'bad');
     if (res === 'no_user') return toast('لا يوجد حساب بهذا البريد. أنشئه من Supabase أولاً.', 'bad');
-    toast('تمت الإضافة'); renderTeam();
+    if (res === 'self') return toast('لا يمكنك تقليل صلاحياتك بنفسك.', 'bad');
+    toast('تم الحفظ'); renderTeam();
   };
-  $('#view').querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+
+  V.querySelectorAll('[data-e]').forEach(b => b.onclick = () => {
+    const m = data[+b.dataset.e];
+    $('#tmEmail').value = m.email; $('#tmEmail').disabled = true;
+    box('full').checked = m.role === 'owner';
+    ['projects','posts'].forEach(p => box(p).checked = m.role !== 'owner' && (m.perms || []).includes(p));
+    $('#tmHead').textContent = 'تعديل صلاحيات ' + m.email;
+    $('#tmAdd').textContent = 'حفظ'; $('#tmReset').style.display = '';
+    $('#tmEmail').scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+  V.querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
     const m = data[+b.dataset.x];
-    if (!confirm(`إزالة صلاحية ${m.email} من لوحة التحكم؟\nيبقى حسابه موجوداً لكنه لن يرى شيئاً.`)) return;
+    if (!confirm(`إزالة ${m.email} من الفريق؟\nيبقى حسابه موجوداً لكنه لن يرى شيئاً في لوحة التحكم.`)) return;
     const { error } = await sb.from('team').delete().eq('user_id', m.user_id);
     if (error) return toast('تعذّرت الإزالة: ' + error.message, 'bad');
     toast('تمت الإزالة'); renderTeam();
