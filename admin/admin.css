@@ -34,6 +34,13 @@ input,select,textarea,button{font-family:inherit;font-size:14px}
 
 /* ── عناصر النموذج ── */
 .field{margin-bottom:16px}
+.pwwrap{position:relative}
+.pwwrap .inp{padding-left:44px}
+.pweye{position:absolute;left:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;
+  background:none;border:0;border-radius:8px;color:var(--dim);cursor:pointer}
+.pweye:hover,.pweye:focus-visible{color:var(--fg);background:rgba(255,255,255,.06);outline:none}
+.pweye svg{width:18px;height:18px}
+.pweye .off,.pweye.on .on{display:none}.pweye.on .off{display:block}
 .field label{display:block;font-size:12.5px;color:var(--dim);margin-bottom:7px;font-weight:500}
 .field label .req{color:var(--bad)}
 .inp{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--fg);

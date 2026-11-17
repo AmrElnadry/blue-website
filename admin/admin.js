@@ -938,6 +938,25 @@ function wireSettingsImages() {
   });
 }
 
+/* ─────────── زر إظهار كلمة المرور ─────────── */
+const EYE = '<svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'
+  + '<svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.4 3.3M6.6 6.6C3.7 8.5 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M3 3l18 18"/></svg>';
+document.querySelectorAll('input[type="password"]').forEach(inp => {
+  const wrap = document.createElement('div'); wrap.className = 'pwwrap';
+  inp.replaceWith(wrap); wrap.appendChild(inp);
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'pweye'; b.innerHTML = EYE;
+  b.setAttribute('aria-label', 'إظهار كلمة المرور');
+  b.onclick = () => {
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    b.classList.toggle('on', show);
+    b.setAttribute('aria-label', show ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+    inp.focus();
+  };
+  wrap.appendChild(b);
+});
+
 /* ─────────── تشغيل ─────────── */
 window.addEventListener('hashchange', () => {
   const k = location.hash.slice(1);
