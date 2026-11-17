@@ -92,13 +92,13 @@ const SECTIONS = {
     cols:[
       {h:'التصنيف', render:r =>
         `<div class="ttl">${esc(r.name_ar)}</div><div class="sub">${esc(r.name_en)}</div>`},
-      {h:'المفتاح', render:r => `<code style="color:var(--dim)">${esc(r.key)}</code>`},
       {h:'الترتيب', render:r => r.sort}
     ],
     fields:[
       {n:'name', t:'text', i18n:true, label:'اسم التصنيف', req:true},
-      {n:'key',  t:'slug', label:'المفتاح', req:true, hint:'مثل: ads أو drama'},
-      {n:'sort', t:'number', label:'الترتيب', def:0}
+      {n:'key',  t:'slug', from:'name_en', auto:true},
+      {n:'sort', t:'number', label:'الترتيب', def:0,
+       hint:'ترتيب الزر في فلاتر صفحة الأعمال. الأصغر يظهر أولاً.'}
     ]
   },
 

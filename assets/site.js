@@ -703,7 +703,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   whenReady(()=>{
   document.querySelectorAll('[data-filters]').forEach(box=>{
     const target=document.querySelector(box.dataset.filters);
-    box.innerHTML=CATS.map((c,i)=>
+    /* زر «الكل» + التصنيفات التي فيها مشاريع منشورة فقط */
+    box.innerHTML=CATS.filter(c=>c.k==='all'||PROJECTS.some(p=>p.k===c.k)).map((c,i)=>
       `<button class="${i===0?'on':''}" data-k="${c.k}" data-ar="${c.ar}" data-en="${c.en}">${c.ar}</button>`).join('');
     box.addEventListener('click',e=>{
       const b=e.target.closest('button'); if(!b) return;
@@ -744,6 +745,11 @@ function videoRef(u){
   if((m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return {gd:m[1]};
   if((m=u.match(/(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/))) return {yt:m[1]};
   return {};
+}
+/* التصنيفات: الأسماء والترتيب من لوحة التحكم */
+function setCats(rows){
+  if(!Array.isArray(rows) || !rows.length) return;
+  CATS.splice(1, CATS.length-1, ...rows.filter(r=>r.key).map(r=>({k:r.key, ar:r.name_ar, en:r.name_en||r.name_ar})));
 }
 /* مسار الصورة نسبي داخل الموقع (assets/…) والروابط الخارجية كما هي */
 const relImg=u=>u ? u.replace(/^\/(?=assets\/)/,'') : '';
@@ -799,12 +805,13 @@ const BLUE_DATA=(async()=>{
   const res=await Promise.race([
     Promise.all([
       get('projects?published=eq.true&select=slug,title_ar,title_en,year,client,client_en,cover_url,video_url,summary_ar,summary_en,body_ar,body_en,credits,duration,ratio,featured,created_at,categories(key,name_ar,name_en)&order=sort.asc,created_at.desc'),
+      get('categories?select=key,name_ar,name_en&order=sort.asc'),
       get('posts?published=eq.true&select=slug,title_ar,title_en,excerpt_ar,excerpt_en,cover_url,tag_ar,tag_en,read_minutes,published_at,created_at&order=published_at.desc')
     ]),
     new Promise(r=>setTimeout(()=>r(null),2500))
   ]);
   if(!res) return;
-  setProjects(res[0]); setArticles(res[1]);
+  setCats(res[1]); setProjects(res[0]); setArticles(res[2]);
 })().catch(()=>{});
 const DOM_READY=new Promise(r=>document.readyState==='loading'
   ? document.addEventListener('DOMContentLoaded',r) : r());
