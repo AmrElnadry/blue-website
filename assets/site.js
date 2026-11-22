@@ -353,8 +353,8 @@ function buildFooter(){
         </div>
         <div class="fcol">
           <b data-ar="الرياض — السعودية" data-en="RIYADH — SAUDI ARABIA">الرياض — السعودية</b>
-          <a href="tel:+966567561619"><bdi dir="ltr">+966 56 756 1619</bdi></a>
           <a href="tel:+966531473116"><bdi dir="ltr">+966 53 147 3116</bdi></a>
+          <a href="tel:+966567561619"><bdi dir="ltr">+966 56 756 1619</bdi></a>
         </div>
         <div class="fcol">
           <b data-ar="إسطنبول — تركيا" data-en="ISTANBUL — TURKEY">إسطنبول — تركيا</b>
