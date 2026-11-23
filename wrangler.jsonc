@@ -2,10 +2,14 @@
   // Blue — إعدادات النشر على Cloudflare Workers (موقع ثابت)
   "name": "blue-website",
   "compatibility_date": "2026-10-25",
+  // الخادم يعمل لملفات الفيديو فقط (طلبات Range لآيفون)، وباقي الموقع ملفات ثابتة
+  "main": "worker/index.js",
   "workers_dev": true,
   "assets": {
     "directory": "./",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/assets/media/*"]
   },
   "routes": [
     { "pattern": "blue-network.sa", "custom_domain": true },
