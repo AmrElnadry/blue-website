@@ -53,6 +53,15 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
 .hero .row{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fade 1s var(--ease) .75s forwards}
 .hero .reelbtn{margin-inline-start:auto}
 .hero .reelbtn svg{width:15px;height:15px;flex:none}
+/* الشوريل: يُعرض فوق الصفحة ويبدأ بالصوت من ضغطة الزر نفسها (مطلوب على الموبايل) */
+.reelov{position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center;opacity:0;transition:opacity .35s}
+.reelov.on{opacity:1}
+.reelov video{width:100%;height:100%;object-fit:contain;background:#000}
+.reelov .x{position:absolute;top:max(16px,env(safe-area-inset-top));inset-inline-end:16px;z-index:2;width:44px;height:44px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;cursor:pointer}
+.reelov .x svg{width:18px;height:18px}
+body.reel-open{overflow:hidden}
+body.reel-open .cur,body.reel-open .cur-ring{opacity:0}
 @media(max-width:760px){.hero .reelbtn{margin-inline-start:0}}
 .scrollhint{position:absolute;bottom:72px;inset-inline-start:var(--pad);z-index:5;display:flex;align-items:center;
   gap:12px;font-size:10px;letter-spacing:.28em;color:var(--dim)}
@@ -136,6 +145,33 @@ html[lang="ar"] .hero h1 .ln{padding-block:.16em .24em;margin-block:-.16em -.24e
   if(matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData){
     v.removeAttribute('autoplay'); v.preload='none'; v.pause();
   }
+})();
+/* زر «مشاهدة الشوريل»: تشغيل فوري بالصوت. المتصفح يسمح بالصوت لأن التشغيل يبدأ داخل ضغطة الزائر */
+(()=>{
+  const btn=document.querySelector('.reelbtn'); if(!btn) return;
+  let ov=null;
+  const close=()=>{ if(!ov) return; const o=ov; ov=null;
+    o.querySelector('video').pause(); o.classList.remove('on'); document.body.classList.remove('reel-open');
+    setTimeout(()=>o.remove(),350); document.querySelector('.hero .reel')?.play().catch(()=>{}); };
+  btn.addEventListener('click',e=>{
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.button) return;   /* فتح في تبويب جديد يبقى كما هو */
+    e.preventDefault();
+    const small=matchMedia('(max-width:900px)').matches;
+    ov=document.createElement('div'); ov.className='reelov';
+    ov.innerHTML=`<video playsinline controls preload="auto" src="assets/media/showreel-${small?720:1080}.mp4"></video>
+      <button class="x" type="button" aria-label="${document.documentElement.lang==='en'?'Close':'إغلاق'}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+    document.body.appendChild(ov); document.body.classList.add('reel-open');
+    const v=ov.querySelector('video'); v.muted=false; v.volume=1;
+    v.play().catch(()=>{ v.muted=true; v.play().catch(()=>{}); });
+    document.querySelector('.hero .reel')?.pause();
+    requestAnimationFrame(()=>ov.classList.add('on'));
+    ov.querySelector('.x').onclick=()=>history.state?.reel ? history.back() : close();
+    v.addEventListener('ended',()=>history.state?.reel ? history.back() : close());
+    history.pushState({reel:1},'');   /* زر الرجوع في الموبايل يغلق الشوريل */
+  });
+  addEventListener('popstate',close);
+  addEventListener('keydown',e=>{ if(e.key==='Escape'&&ov) history.state?.reel ? history.back() : close(); });
 })();
 whenReady(()=>{
   const mos=document.getElementById('mosaic');

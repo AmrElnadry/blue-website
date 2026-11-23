@@ -20,7 +20,8 @@
 <meta property="og:image:alt" content="Blue — نصنع الصورة التي تُحكى">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://blue-network.sa/assets/og.jpg">
-<link rel="preconnect" href="https://player.vimeo.com">
+<link rel="preload" as="video" href="assets/media/showreel-1080.mp4" media="(min-width:901px)">
+<link rel="preload" as="video" href="assets/media/showreel-720.mp4" media="(max-width:900px)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap" rel="stylesheet">
@@ -41,7 +42,13 @@ html[lang="en"] body{font-family:'Archivo',system-ui,sans-serif}
 html[dir="rtl"] .back svg{transform:scaleX(-1)}
 .stage{position:fixed;inset:0;display:grid;place-items:center;padding:72px clamp(0px,3vw,36px) 24px}
 .frame{width:min(100%,calc((100svh - 96px) * 16 / 9));aspect-ratio:16/9;background:#000}
-.frame iframe{width:100%;height:100%;border:0;display:block}
+.frame{position:relative}
+.frame video{width:100%;height:100%;display:block;background:#000}
+.unmute{position:absolute;inset:auto 0 22px;margin:auto;width:max-content;display:none;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:60px;border:0;background:#2f8fe0;color:#fff;font:inherit;font-size:15px;cursor:pointer;
+  box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.unmute.on{display:inline-flex}
+.unmute svg{width:20px;height:20px}
 body.idle .bar{opacity:0}
 @media(max-width:760px){.stage{padding-inline:0}.bar img{height:26px}}
 </style>
@@ -57,13 +64,13 @@ body.idle .bar{opacity:0}
 
 <main class="stage">
   <div class="frame">
-    <iframe id="reel" src="https://player.vimeo.com/video/1247645306?dnt=1&title=0&byline=0&portrait=0&color=2f8fe0&playsinline=1"
-      allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen
-      title="BLUE SHOWREEL 2026"></iframe>
+    <video id="reel" playsinline controls preload="auto" title="BLUE SHOWREEL 2026"></video>
+    <button class="unmute" id="unmute" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+      <span data-ar="تشغيل الصوت" data-en="Turn sound on">تشغيل الصوت</span></button>
   </div>
 </main>
 
-<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 (function(){
   /* اللغة نفسها المختارة في باقي الموقع */
@@ -82,16 +89,18 @@ body.idle .bar{opacity:0}
   });
   addEventListener('keydown',e=>{ if(e.key==='Escape') back.click(); });
 
-  /* التشغيل بالصوت مباشرة. لو منعه المتصفح يظهر زر التشغيل في المشغّل، وضغطة واحدة تشغّله بالصوت */
-  if(window.Vimeo){
-    const player=new Vimeo.Player(document.getElementById('reel'));
-    player.ready().then(()=>player.setVolume(1)).then(()=>player.play()).catch(()=>{});
-    /* إخفاء الشريط العلوي أثناء التشغيل وإظهاره عند تحريك الماوس */
-    let t; const wake=()=>{ document.body.classList.remove('idle'); clearTimeout(t);
-      t=setTimeout(()=>player.getPaused().then(p=>{ if(!p) document.body.classList.add('idle'); }),2500); };
-    player.on('play',wake); player.on('pause',()=>{ clearTimeout(t); document.body.classList.remove('idle'); });
-    ['mousemove','touchstart','keydown'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
-  }
+  /* التشغيل بالصوت مباشرة. لو منعه المتصفح (فتح الرابط مباشرة على الموبايل) يبدأ بلا صوت مع زر «تشغيل الصوت» */
+  const v=document.getElementById('reel'), um=document.getElementById('unmute');
+  v.src='assets/media/showreel-'+(matchMedia('(max-width:900px)').matches?720:1080)+'.mp4';
+  v.muted=false; v.volume=1;
+  v.play().catch(()=>{ v.muted=true; um.classList.add('on'); v.play().catch(()=>{}); });
+  um.onclick=()=>{ v.muted=false; v.volume=1; um.classList.remove('on'); v.play().catch(()=>{}); };
+  v.addEventListener('volumechange',()=>{ if(!v.muted) um.classList.remove('on'); });
+  /* إخفاء الشريط العلوي أثناء التشغيل وإظهاره عند تحريك الماوس أو اللمس */
+  let t; const wake=()=>{ document.body.classList.remove('idle'); clearTimeout(t);
+    t=setTimeout(()=>{ if(!v.paused) document.body.classList.add('idle'); },2500); };
+  v.addEventListener('play',wake); v.addEventListener('pause',()=>{ clearTimeout(t); document.body.classList.remove('idle'); });
+  ['mousemove','touchstart','keydown'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
 })();
 </script>
 </body>
